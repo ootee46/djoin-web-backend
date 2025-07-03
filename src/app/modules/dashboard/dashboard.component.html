@@ -1,0 +1,34 @@
+<div class="absolute inset-0 flex flex-col min-w-0  overflow-y-auto" cdkScrollable>
+    <div class="relative m-4 mr-0 border   overflow-hidden bg-white flex-1 flex flex-col" *ngIf="(user$ | async) as user">
+        <nav mat-tab-nav-bar  [tabPanel]="tabPanel" *ngIf="(package$ | async) as package">
+            <a mat-tab-link  [routerLink]="['../overview']" routerLinkActive="active-link" [active]="selectedPanel === 'overview'"> Overview </a>
+          
+            <a mat-tab-link *ngIf="user.userLevel === 1 "  [routerLink]="['../history']" routerLinkActive="active-link" [active]="selectedPanel === 'history'"> Meeting History 
+            </a>
+            <a mat-tab-link *ngIf="user.userLevel === 1 " [routerLink]="['../upcoming']" routerLinkActive="active-link" [active]="selectedPanel === 'upcoming'"> Upcoming Meeting 
+                <span class="ml-4" matBadgeColor="primary" [matBadge]="package.upcomeMeeting"></span>
+            </a>
+            <a mat-tab-link   [routerLink]="['../agenda-approve']" routerLinkActive="active-link" [active]="selectedPanel === 'agenda-approve'" *ngIf="package.totalWaitingAgenda > 0"> Pending Agenda  
+                <span class="ml-4" matBadgeColor="warn" [matBadge]="package.totalWaitingAgenda"></span></a>
+            <a mat-tab-link  [routerLink]="['../minute-approve']" routerLinkActive="active-link" [active]="selectedPanel === 'minute-approve'" *ngIf="package.totalWaitingMinute > 0"> Pending Minutes
+                <span class="ml-4" matBadgeColor="warn" [matBadge]="package.totalWaitingMinute"></span>
+            </a>
+            <a mat-tab-link  [routerLink]="['../agenda-request']" routerLinkActive="active-link" [active]="selectedPanel === 'agenda-request'" *ngIf="package.totalAgendaRequest > 0"> Agenda Reservation
+                <!-- <span class="ml-4" matBadgeColor="primary" [matBadge]="package.totalAgendaRequest"></span> -->
+            </a>
+            <a mat-tab-link   [routerLink]="['../agenda-approve-history']" routerLinkActive="active-link" [active]="selectedPanel === 'agenda-approve-history'" > Agenda Approve History</a>
+            <a mat-tab-link   [routerLink]="['../minute-approve-history']" routerLinkActive="active-link" [active]="selectedPanel === 'minute-approve-history'" > Minute Approve History</a>
+          </nav>
+        <mat-tab-nav-panel #tabPanel class="flex-1 relative ">
+           <dashboard-package-info class="h-full" *ngIf="selectedPanel === 'overview'"></dashboard-package-info>
+           <dashboard-upcoming class="h-full" *ngIf="selectedPanel === 'upcoming'"></dashboard-upcoming>
+           <dashboard-meeting-history class="h-full" *ngIf="selectedPanel === 'history'"></dashboard-meeting-history>
+           <dashboard-agenda-approve class="h-full" *ngIf="selectedPanel === 'agenda-approve'"></dashboard-agenda-approve>
+           <dashboard-minute-approve class="h-full" *ngIf="selectedPanel === 'minute-approve'"></dashboard-minute-approve>
+           <dashboard-agenda-request class="h-full" *ngIf="selectedPanel === 'agenda-request'"></dashboard-agenda-request>
+           <dashboard-agenda-approve-history class="h-full" *ngIf="selectedPanel === 'agenda-approve-history'"></dashboard-agenda-approve-history>
+           <dashboard-minute-approve-history class="h-full" *ngIf="selectedPanel === 'minute-approve-history'"></dashboard-minute-approve-history>
+        </mat-tab-nav-panel>
+    </div>
+
+</div>

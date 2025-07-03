@@ -1,0 +1,1141 @@
+<div class="h-full flex flex-col p-0 m-0 overflow-hidden">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{ dialogTitle }}</span>
+            <button
+                class="items-end"
+                type="button"
+                mat-icon-button
+                (click)="close()"
+                aria-label="Close dialog"
+            >
+                <mat-icon
+                    class="icon-size-5 cursor-pointer material-symbols-outlined"
+                    >close</mat-icon
+                >
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <mat-drawer-container class="flex-1 bg-white">
+        <mat-drawer-content class="h-full">
+            <form
+                #myForm="ngForm"
+                class="h-full flex flex-col"
+                [formGroup]="dataForm"
+                (submit)="saveData()"
+            >
+                <div mat-dialog-content class="p-6 m-0 flex-1 overflow-auto">
+                    <div class="flex flex-row gap-4 mb-4">
+                        <mat-slide-toggle formControlName="isCustom"
+                            >Custom No.</mat-slide-toggle
+                        >
+                        <mat-slide-toggle formControlName="isVote"
+                            >Voting Required.</mat-slide-toggle
+                        >
+                        <mat-slide-toggle formControlName="isVoteOpen"
+                            >Vote Open.</mat-slide-toggle
+                        >
+                    </div>
+                    <div class="flex flex-row gap-4 mb-4">
+                        <div
+                            *ngIf="
+                                dataForm &&
+                                dataForm.get('isCustom').value === true
+                            "
+                        >
+                            <mat-form-field
+                                class="fuse-mat-no-subscript w-40"
+                                #agendaNoArea
+                            >
+                                <mat-label>Agenda No.</mat-label>
+                                <input
+                                    formControlName="agendaNo"
+                                    maxlength="40"
+                                    matInput
+                                />
+                            </mat-form-field>
+                        </div>
+                        <mat-form-field class="fuse-mat-no-subscript flex-1">
+                            <mat-label>Agenda Name</mat-label>
+                            <input
+                                formControlName="title"
+                                matInput
+                                maxlength="900"
+                            />
+                        </mat-form-field>
+                        <mat-form-field class="fuse-mat-no-subscript w-40">
+                            <mat-label>Estimate Time (Mins)</mat-label>
+                            <input
+                                type="number"
+                                [min]="0"
+                                formControlName="useTime"
+                                matInput
+                            />
+                        </mat-form-field>
+                    </div>
+                    <mat-form-field class="fuse-mat-no-subscript w-full mb-6">
+                        <mat-label>Description</mat-label>
+                        <textarea
+                            matInput
+                            formControlName="description"
+                        ></textarea>
+                    </mat-form-field>
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                        <div class="flex-1">
+                            <div
+                                class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer"
+                                (click)="isPresenterPanel = !isPresenterPanel"
+                            >
+                                <div class="font-semibold">Presenters</div>
+                                <span *ngIf="isPresenterPanel">[-]</span>
+                                <span *ngIf="!isPresenterPanel">[+]</span>
+                            </div>
+                            <div
+                                class="h-60 flex flex-col p-4 border-x border-b overflow-hidden"
+                                *ngIf="isPresenterPanel"
+                            >
+                                <div class="flex flex-row gap-2 justify-center">
+                                    <search-option
+                                        class="flex-1"
+                                        [(ngModel)]="selectPresenter"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        [displayText]="null"
+                                        [options$]="optionPresenters$"
+                                        [value]="'id'"
+                                        [text]="'name'"
+                                        [placeholder]="'Select Presenter'"
+                                        [showAll]="false"
+                                    ></search-option>
+                                    <button
+                                        type="button"
+                                        mat-raised-button
+                                        class="bg-sky-700 text-white mt-1"
+                                        (click)="addPresenter()"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                <div class="overflow-auto">
+                                    <ng-container *ngIf="selectPresenters">
+                                        <ng-container
+                                            *ngIf="
+                                                selectPresenters.length > 0;
+                                                else noDatas
+                                            "
+                                        >
+                                            <div class="grid">
+                                                <div
+                                                    class="z-10 grid style1-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                                >
+                                                    <div>Action</div>
+                                                    <div>Name</div>
+                                                </div>
+                                                <ng-container
+                                                    *ngFor="
+                                                        let data of selectPresenters
+                                                    "
+                                                >
+                                                    <div
+                                                        class="style1-grid grid items-center gap-4 w-full py-2 px-6 border-b"
+                                                    >
+                                                        <div>
+                                                            <button
+                                                                type="button"
+                                                                (click)="
+                                                                    removePresenter(
+                                                                        data
+                                                                    )
+                                                                "
+                                                            >
+                                                                <mat-icon
+                                                                    tile="Delete"
+                                                                    class="material-symbols-outlined mt-1"
+                                                                    >delete</mat-icon
+                                                                >
+                                                            </button>
+                                                        </div>
+                                                        <div class="truncate">
+                                                            {{ data.name }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-template #noDatas>
+                                        <div
+                                            class="p-4 border-t tracking-tight text-center"
+                                        >
+                                            Record not found!
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div
+                                class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer"
+                                (click)="
+                                    isExcludeUserPanel = !isExcludeUserPanel
+                                "
+                            >
+                                <div class="font-semibold">
+                                    Exclude Attendee
+                                </div>
+                                <span *ngIf="isExcludeUserPanel">[-]</span>
+                                <span *ngIf="!isExcludeUserPanel">[+]</span>
+                            </div>
+                            <div
+                                class="h-60 p-4 border-x border-b flex flex-col"
+                                *ngIf="isExcludeUserPanel"
+                            >
+                                <div class="flex flex-row gap-2 justify-center">
+                                    <search-option
+                                        class="flex-1"
+                                        [displayText]="null"
+                                        [options$]="optionExcludeUsers$"
+                                        [(ngModel)]="selectExcludeUser"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        [value]="'id'"
+                                        [text]="'name'"
+                                        [placeholder]="'Select Exclude User'"
+                                        [allText]="'All Group'"
+                                        [showAll]="false"
+                                    ></search-option>
+                                    <button
+                                        type="button"
+                                        mat-raised-button
+                                        class="bg-sky-700 text-white mt-1"
+                                        (click)="addExcludeUser()"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                <div class="overflow-auto">
+                                    <ng-container *ngIf="selectExcludeUsers">
+                                        <ng-container
+                                            *ngIf="
+                                                selectExcludeUsers.length > 0;
+                                                else noDatas
+                                            "
+                                        >
+                                            <div class="grid">
+                                                <div
+                                                    class="z-10 grid style1-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                                >
+                                                    <div>Action</div>
+                                                    <div>Name</div>
+                                                </div>
+                                                <ng-container
+                                                    *ngFor="
+                                                        let data of selectExcludeUsers
+                                                    "
+                                                >
+                                                    <div
+                                                        class="style1-grid grid items-center gap-4 w-full py-2 px-6 border-b"
+                                                    >
+                                                        <div>
+                                                            <button
+                                                                type="button"
+                                                                (click)="
+                                                                    removeExcludeUser(
+                                                                        data
+                                                                    )
+                                                                "
+                                                            >
+                                                                <mat-icon
+                                                                    tile="Delete"
+                                                                    class="material-symbols-outlined mt-1"
+                                                                    >delete</mat-icon
+                                                                >
+                                                            </button>
+                                                        </div>
+                                                        <div class="truncate">
+                                                            {{ data.name }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border mb-4">
+                        <div
+                            class="border-b font-medium bg-gray-100 py-2 px-2 flex flex-row justify-between cursor-pointer"
+                            (click)="
+                                isPresenterDocumentPanel =
+                                    !isPresenterDocumentPanel
+                            "
+                        >
+                            <div class="font-semibold">
+                                Presenters Documents (.png, .jpg, .pdf, .docx,
+                                .xlsx, .pptx &lt;= 50Mb)
+                            </div>
+                            <span *ngIf="isPresenterDocumentPanel">[-]</span>
+                            <span *ngIf="!isPresenterDocumentPanel">[+]</span>
+                        </div>
+                        <ng-container *ngIf="isPresenterDocumentPanel">
+                            <div class="flex flex-row gap-4 mt-4 mx-4">
+                                <file-input
+                                    #presenterAttachmentInput
+                                    [displayText]="''"
+                                    [limitSize]="50"
+                                    [acceptFile]="
+                                        '.png,.jpg,.pdf,.docx,.xlsx,.pptx'
+                                    "
+                                    class="flex-1"
+                                    [(ngModel)]="presenterAttachment"
+                                    [ngModelOptions]="{ standalone: true }"
+                                ></file-input>
+                                <div>
+                                    <button
+                                        type="button"
+                                        class="mt-2"
+                                        (click)="addPresenterAttachment()"
+                                        mat-raised-button
+                                        color="primary"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 mx-4">
+                                <ng-container *ngIf="presenterAttachments">
+                                    <ng-container
+                                        *ngIf="
+                                            presenterAttachments.length > 0;
+                                            else noDatas
+                                        "
+                                    >
+                                        <div class="grid">
+                                            <div
+                                                class="grid grid-cols-[50px_minmax(160px,_1fr)_160px_120px] z-10 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                                            >
+                                                <div>Action</div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setPresentersSort(
+                                                            'fileName'
+                                                        )
+                                                    "
+                                                >
+                                                    File Name
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >
+                                                            {{
+                                                                sortPresenters.sort ===  "asc" && sortPresenters.fieldName === 'fileName'
+                                                                    ? "arrow_upward"
+                                                                    : "arrow_downward"
+                                                            }}
+                                                        </mat-icon>
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setPresentersSort(
+                                                            'updatedUser'
+                                                        )
+                                                    "
+                                                >
+                                                    Uploaded By
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >
+                                                            {{
+                                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedUser'
+                                                                    ? "arrow_upward"
+                                                                    : "arrow_downward"
+                                                            }}
+                                                        </mat-icon>
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setPresentersSort(
+                                                            'updatedDate'
+                                                        )
+                                                    "
+                                                >
+                                                    Uploaded Date
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >
+                                                            {{
+                                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedDate'
+                                                                    ? "arrow_upward"
+                                                                    : "arrow_downward"
+                                                            }}
+                                                        </mat-icon>
+                                                </div>
+                                            </div>
+                                            <ng-container *ngFor="let item of sortArrayByField(presenterAttachments,sortPresenters.fieldName,sortPresenters.sort); ">
+                                                <div class="grid grid-cols-[50px_minmax(160px,_1fr)_160px_120px] items-center gap-4 w-full py-2 px-6  border-b">
+                                                    <div>
+                                                        <button type="button" (click)="deletePresenterAttachment(item)">
+                                                            <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                                        </button>
+                                                    </div>
+                                                    <div class="truncate">
+                                                        <a class="underline cursor-pointer" [openFile]="item">{{item.fileName}}</a>
+                                                    </div>
+                                                    <div class="truncate">
+                                                        {{item.updatedUser}}
+                                                    </div>
+                                                    <div class="truncate">
+                                                        {{item.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="border mb-4">
+                        <div
+                            class="border-b font-medium bg-gray-100 py-2 px-2 flex flex-row justify-between cursor-pointer"
+                            (click)="isAttachmentPanel = !isAttachmentPanel"
+                        >
+                            <div class="font-semibold">
+                                Meeting Documents (.png, .jpg, .pdf, .docx,
+                                .xlsx, .pptx &lt;= 50Mb)
+                            </div>
+                            <span *ngIf="isAttachmentPanel">[-]</span>
+                            <span *ngIf="!isAttachmentPanel">[+]</span>
+                        </div>
+                        <ng-container *ngIf="isAttachmentPanel">
+                            <div class="flex flex-row gap-4 mt-4 mx-4">
+                                <file-input
+                                    #attachmentInput
+                                    [displayText]="''"
+                                    [limitSize]="50"
+                                    [acceptFile]="
+                                        '.png,.jpg,.pdf,.docx,.xlsx,.pptx'
+                                    "
+                                    class="flex-1"
+                                    [(ngModel)]="attachment"
+                                    [ngModelOptions]="{ standalone: true }"
+                                ></file-input>
+                                <search-option
+                                    [(ngModel)]="documentType"
+                                    [ngModelOptions]="{ standalone: true }"
+                                    [placeholder]="'Document Type'"
+                                    [displayText]="''"
+                                    [options$]="documentTypes$"
+                                    [value]="documentType"
+                                    [text]="'name'"
+                                    class="w-60"
+                                ></search-option>
+                                <div>
+                                    <button
+                                        type="button"
+                                        class="mt-2"
+                                        mat-raised-button
+                                        color="primary"
+                                        (click)="addAttachment()"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 mx-4">
+                                <ng-container *ngIf="attachments">
+                                    <div
+                                        class="mb-2 flex flex-row justify-between gap-4"
+                                        *ngIf="attachments.length > 0"
+                                    >
+                                        <div class="flex flex-row gap-4">
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    class="bg-sky-700 text-white"
+                                                    mat-raised-button
+                                                    (click)="openPermission()"
+                                                >
+                                                    Set Permission
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    class="bg-red-700 text-white"
+                                                    mat-raised-button
+                                                    (click)="
+                                                        multipleDeleteAttachment()
+                                                    "
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button
+                                                type="button"
+                                                class="bg-gray-700 text-white"
+                                                (click)="openFileHistory()"
+                                                mat-raised-button
+                                            >
+                                                Histories
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container
+                                        *ngIf="
+                                            attachments.length > 0;
+                                            else noDatas
+                                        "
+                                    >
+                                        <div class="grid">
+                                            <div
+                                                class="grid grid-cols-[50px_50px_minmax(160px,_1fr)_200px_160px_120px] z-10 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                                            >
+                                                <div>
+                                                    <mat-checkbox
+                                                        [(ngModel)]="isAllCheck"
+                                                        (change)="
+                                                            toggleAllAttachment(
+                                                                $event
+                                                            )
+                                                        "
+                                                        [ngModelOptions]="{
+                                                            standalone: true
+                                                        }"
+                                                    ></mat-checkbox>
+                                                </div>
+                                                <div>Action</div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setAttachmentsSort(
+                                                            'fileName'
+                                                        )
+                                                    "
+                                                >
+                                                    File Name
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >{{"swap_vert"}}
+                                                        </mat-icon>
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setAttachmentsSort(
+                                                            'documentTypeName'
+                                                        )
+                                                    "
+                                                >
+                                                    Document Type
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >
+                                                            {{
+                                                                "swap_vert"
+                                                            }}
+                                                        </mat-icon>
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setAttachmentsSort(
+                                                            'updatedUser'
+                                                        )
+                                                    "
+                                                >
+                                                    Uploaded By
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >
+                                                            {{
+                                                                "swap_vert"
+                                                            }}
+                                                        </mat-icon>
+                                                </div>
+                                                <div
+                                                    class="flex items-center gap-2 cursor-pointer"
+                                                    (click)="
+                                                        setAttachmentsSort(
+                                                            'updatedDate'
+                                                        )
+                                                    "
+                                                >
+                                                    Uploaded Date
+                                                        <mat-icon
+                                                            class="material-symbols-outlined icon-size-4"
+                                                        >
+                                                            {{
+                                                                "swap_vert"
+                                                            }}
+                                                        </mat-icon>
+                                                </div>
+                                            </div>
+                                            <div
+                                                cdkDropList
+                                                class="cursor-pointer"
+                                                (cdkDropListDropped)="
+                                                    drop($event)
+                                                "
+                                            >
+                                                <ng-container
+                                                    *ngFor="
+                                                        let item of attachments
+                                                        let index = index
+                                                    "
+                                                >
+                                                    <div
+                                                        class="grid grid-cols-[50px_50px_minmax(160px,_1fr)_200px_160px_120px] items-center gap-4 w-full py-2 px-6 border-b bg-white"
+                                                        [cdkDragData]="item"
+                                                        cdkDrag
+                                                    >
+                                                        <div>
+                                                            <mat-checkbox
+                                                                [(ngModel)]="
+                                                                    item.isCheck
+                                                                "
+                                                                (change)="
+                                                                    isAllCheck = false
+                                                                "
+                                                                [ngModelOptions]="{
+                                                                    standalone: true
+                                                                }"
+                                                            ></mat-checkbox>
+                                                        </div>
+                                                        <div>
+                                                            <button
+                                                                mat-icon-button
+                                                                type="button"
+                                                                [matMenuTriggerFor]="
+                                                                    moreMenu
+                                                                "
+                                                                aria-label="More"
+                                                                (click)="
+                                                                    $event.stopPropagation()
+                                                                "
+                                                            >
+                                                                <mat-icon
+                                                                    class="material-symbols-outlined"
+                                                                    >more_vert</mat-icon
+                                                                >
+                                                            </button>
+                                                            <mat-menu
+                                                                #moreMenu="matMenu"
+                                                            >
+                                                                <button
+                                                                    type="button"
+                                                                    mat-menu-item
+                                                                    (click)="
+                                                                        singlePermission(
+                                                                            item
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <mat-icon
+                                                                        class="material-symbols-outlined"
+                                                                        >lock</mat-icon
+                                                                    >
+                                                                    Set
+                                                                    Permission
+                                                                </button>
+                                                                <mat-divider></mat-divider>
+                                                                <button
+                                                                    *ngIf="
+                                                                        item.isNew ===
+                                                                        false
+                                                                    "
+                                                                    type="button"
+                                                                    mat-menu-item
+                                                                    (click)="
+                                                                        replaceFile(
+                                                                            item,
+                                                                            false
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <mat-icon
+                                                                        class="material-symbols-outlined"
+                                                                        >find_replace</mat-icon
+                                                                    >
+                                                                    Replace
+                                                                </button>
+                                                                <mat-divider
+                                                                    *ngIf="
+                                                                        item.isNew ===
+                                                                        false
+                                                                    "
+                                                                ></mat-divider>
+                                                                <button
+                                                                    *ngIf="
+                                                                        item.isNew ===
+                                                                        false
+                                                                    "
+                                                                    type="button"
+                                                                    mat-menu-item
+                                                                    (click)="
+                                                                        replaceFile(
+                                                                            item,
+                                                                            true
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <mat-icon
+                                                                        class="material-symbols-outlined"
+                                                                        >published_with_changes</mat-icon
+                                                                    >
+                                                                    Replace with
+                                                                    Anotation
+                                                                </button>
+                                                                <mat-divider
+                                                                    *ngIf="
+                                                                        item.isNew ===
+                                                                        false
+                                                                    "
+                                                                ></mat-divider>
+                                                                <button
+                                                                    type="button"
+                                                                    mat-menu-item
+                                                                    (click)="
+                                                                        move(
+                                                                            item,
+                                                                            index,
+                                                                            index -
+                                                                                1
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <mat-icon
+                                                                        class="material-symbols-outlined"
+                                                                        >arrow_upward</mat-icon
+                                                                    >
+                                                                    Move Up
+                                                                </button>
+                                                                <mat-divider></mat-divider>
+                                                                <button
+                                                                    type="button"
+                                                                    mat-menu-item
+                                                                    (click)="
+                                                                        move(
+                                                                            item,
+                                                                            index,
+                                                                            index +
+                                                                                1
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <mat-icon
+                                                                        class="material-symbols-outlined"
+                                                                        >arrow_downward</mat-icon
+                                                                    >
+                                                                    Move Down
+                                                                </button>
+                                                                <mat-divider></mat-divider>
+                                                                <button
+                                                                    type="button"
+                                                                    mat-menu-item
+                                                                    (click)="
+                                                                        deleteAttachment(
+                                                                            item
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <mat-icon
+                                                                        class="material-symbols-outlined"
+                                                                        >delete</mat-icon
+                                                                    >
+                                                                    Delete
+                                                                </button>
+                                                                <mat-divider></mat-divider>
+                                                            </mat-menu>
+                                                        </div>
+                                                        <div class="truncate">
+                                                            <a
+                                                                [openFile]="
+                                                                    item
+                                                                "
+                                                                class="underline cursor-pointer"
+                                                                >{{
+                                                                    item.fileName
+                                                                }}</a
+                                                            >
+                                                        </div>
+                                                        <div>
+                                                            {{
+                                                                item.documentTypeName
+                                                            }}
+                                                        </div>
+                                                        <div class="truncate">
+                                                            {{
+                                                                item.updatedUser
+                                                            }}
+                                                        </div>
+                                                        <div class="truncate">
+                                                            {{
+                                                                item.updatedDate
+                                                                    | date
+                                                                        : "dd/MM/yyyy HH:mm"
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="border mb-8">
+                        <div
+                            class="border-b font-medium bg-gray-100 py-2 px-2 flex flex-row justify-between cursor-pointer"
+                            (click)="
+                                isReferenceAttachmentPanel =
+                                    !isReferenceAttachmentPanel
+                            "
+                        >
+                            <div class="font-semibold">
+                                Meeting Reference Attachments
+                            </div>
+                            <span *ngIf="isReferenceAttachmentPanel">[-]</span>
+                            <span *ngIf="!isReferenceAttachmentPanel">[+]</span>
+                        </div>
+                        <div class="p-4" *ngIf="isReferenceAttachmentPanel">
+                            <div>
+                                <button
+                                    type="button"
+                                    (click)="openRefAttachmentForm()"
+                                    mat-raised-button
+                                    color="primary"
+                                >
+                                    Add Reference
+                                </button>
+                            </div>
+                            <div
+                                class="mt-4"
+                                *ngIf="
+                                    refAttachments && refAttachments.length > 0
+                                "
+                            >
+                                <ng-container
+                                    *ngFor="let item of refAttachments"
+                                >
+                                    <div class="border">
+                                        <div
+                                            class="flex flex-row gap-4 justify-between items-center cursor-pointer p-4"
+                                            (click)="item.isOpen = !item.isOpen"
+                                        >
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    mat-icon-button
+                                                    (click)="
+                                                        $event.stopPropagation();
+                                                        removeRefAgenda(item)
+                                                    "
+                                                >
+                                                    <mat-icon
+                                                        class="material-symbols-outlined"
+                                                        >delete</mat-icon
+                                                    >
+                                                </button>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="font-semibold"
+                                                    >Meeting :
+                                                </span>
+                                                {{ item.meetingNo }}
+                                                {{ item.meetingName }}
+                                                {{
+                                                    item.meetingDate
+                                                        | date
+                                                            : "dd/MM/yyyy HH:mm"
+                                                }}
+                                                <br />
+                                                <span class="font-semibold"
+                                                    >Agenda:
+                                                </span>
+                                                {{ item.agendaName }}
+                                            </div>
+                                            <span *ngIf="item.isOpen">[-]</span>
+                                            <span *ngIf="!item.isOpen"
+                                                >[+]</span
+                                            >
+                                        </div>
+                                        <div class="grid" *ngIf="item.isOpen">
+                                            <div
+                                                class="grid grid grid-cols-[minmax(160px,_1fr)_200px_160px_120px] gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                                            >
+                                                <div>File Name</div>
+                                                <div>Document Type</div>
+                                                <div>Uploaded By</div>
+                                                <div>Uploaded Date</div>
+                                            </div>
+                                            <ng-container
+                                                *ngFor="
+                                                    let item2 of item.attachments
+                                                "
+                                            >
+                                                <div
+                                                    class="grid grid grid-cols-[minmax(160px,_1fr)_200px_160px_120px] border-b gap-4 py-2 px-6"
+                                                >
+                                                    <div>
+                                                        <a
+                                                            [openFile]="item2"
+                                                            class="underline cursor-pointer"
+                                                            >{{
+                                                                item2.fileName
+                                                            }}</a
+                                                        >
+                                                    </div>
+                                                    <div>
+                                                        {{
+                                                            item2.documentTypeName
+                                                        }}
+                                                    </div>
+                                                    <div class="truncate">
+                                                        {{ item2.updatedUser }}
+                                                    </div>
+                                                    <div class="truncate">
+                                                        {{
+                                                            item2.updatedDate
+                                                                | date
+                                                                    : "dd/MM/yyyy HH:mm"
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noDatas>
+                    <div class="p-4 border-t tracking-tight text-center">
+                        Record not found!
+                    </div>
+                </ng-template>
+                <div
+                    mat-dialog-actions
+                    class="m-0 py-2 px-4 mat-primary bg-gray-100"
+                >
+                    <button
+                        type="button"
+                        mat-raised-button
+                        color="primary"
+                        (click)="saveData()"
+                        class="save-button mat-accent"
+                        [disabled]="dataForm.invalid"
+                    >
+                        <span *ngIf="!dataForm.disabled"> Save </span>
+                        <mat-progress-spinner
+                            *ngIf="dataForm.disabled"
+                            [diameter]="24"
+                            [mode]="'indeterminate'"
+                        ></mat-progress-spinner>
+                    </button>
+                </div>
+            </form>
+        </mat-drawer-content>
+        <mat-drawer
+            #matDrawer
+            class="sm:w-11/12 overflow-hidden hide-drawer-scroll"
+            [autoFocus]="false"
+            [position]="'end'"
+            [mode]="'over'"
+            [opened]="false"
+        >
+            <div class="h-full flex flex-col">
+                <mat-toolbar matDialogTitle class="bg-gray-200 m-0">
+                    <mat-toolbar-row clas="flex flex-row w-full">
+                        <span class="title dialog-title flex-1"
+                            >Meeting Reference Attachments</span
+                        >
+                        <button
+                            type="button"
+                            class="items-end"
+                            type="button"
+                            mat-icon-button
+                            (click)="closeSlide()"
+                            aria-label="Close dialog"
+                        >
+                            <mat-icon
+                                class="icon-size-5 cursor-pointer material-symbols-outlined"
+                                >close</mat-icon
+                            >
+                        </button>
+                    </mat-toolbar-row>
+                </mat-toolbar>
+                <div class="px-4 py-4">
+                    <button
+                        type="button"
+                        mat-raised-button
+                        color="primary"
+                        (click)="openMeetingSearch()"
+                    >
+                        Select Meeting
+                    </button>
+                </div>
+                <div mat-dialog-content class="m-0 flex flex-1 overflow-hidden">
+                    <div class="flex flex-col flex-auto mb-8 overflow-auto">
+                        <ng-container *ngIf="agendas$ | async as agendas">
+                            <ng-container
+                                *ngIf="agendas.length > 0; else noDatas"
+                            >
+                                <div class="grid">
+                                    <div
+                                        class="z-10 grid grid-cols-[minmax(100px,_1fr)] gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                                    >
+                                        <div class="text-center">Agenda</div>
+                                    </div>
+                                    <ng-container *ngFor="let data of agendas">
+                                        <div
+                                            (click)="viewAgendaAttachment(data)"
+                                            class="cursor-pointer hover:bg-sky-100 grid-cols-[minmax(100px,_1fr)] grid items-center gap-4 w-full py-1 px-6  border-b {{
+                                                bgSteps[0]
+                                            }}"
+                                        >
+                                            <div>
+                                                <div
+                                                    class="font-bold flex flex-row items-center"
+                                                >
+                                                    <span class="mr-2">{{
+                                                        data.agendaNo
+                                                    }}</span>
+                                                    <span>{{
+                                                        data.title
+                                                    }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ng-container
+                                            *ngIf="selectedAgendaId === data.id"
+                                        >
+                                            <ng-container
+                                                *ngTemplateOutlet="
+                                                    viewAttachment
+                                                "
+                                            ></ng-container>
+                                        </ng-container>
+
+                                        <ng-container
+                                            *ngTemplateOutlet="
+                                                childAgenda;
+                                                context: {
+                                                    itemDatas: data.subAgendas,
+                                                    parentData: data
+                                                }
+                                            "
+                                        ></ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <ng-template #childAgenda let-itemDatas="itemDatas">
+                <ng-container *ngIf="itemDatas && itemDatas.length > 0">
+                    <div class="cursor-pointer">
+                        <ng-container *ngFor="let data of itemDatas">
+                            <div
+                                (click)="viewAgendaAttachment(data)"
+                                class="grid-cols-[minmax(100px,_1fr)]  hover:bg-sky-100 grid items-center gap-4 w-full py-1 px-6  border-b {{
+                                    bgSteps[data.level]
+                                }}"
+                            >
+                                <div
+                                    class="flex flex-row items-center"
+                                    [ngStyle]="{
+                                        marginLeft: (data.level + 1) * 10 + 'px'
+                                    }"
+                                >
+                                    {{ data.agendaNo }} {{ data.title }}
+                                </div>
+                            </div>
+                            <ng-container *ngIf="selectedAgendaId === data.id">
+                                <ng-container
+                                    *ngTemplateOutlet="viewAttachment"
+                                ></ng-container>
+                            </ng-container>
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    childAgenda;
+                                    context: {
+                                        itemDatas: data.subAgendas,
+                                        parentData: data
+                                    }
+                                "
+                            ></ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-template>
+
+            <ng-template #viewAttachment>
+                <ng-container *ngIf="agendaRefAttachment$ | async as child">
+                    <ng-container
+                        *ngIf="
+                            child.attachments && child.attachments.length > 0
+                        "
+                    >
+                        <div class="border mb-8">
+                            <div class="mx-2 my-2">
+                                <button
+                                    type="button"
+                                    mat-raised-button
+                                    color="primary"
+                                    (click)="selectedAtendaAttachment()"
+                                >
+                                    Select
+                                </button>
+                            </div>
+                            <div class="grid">
+                                <div
+                                    class="grid grid-cols-[minmax(160px,_1fr)_200px_160px_120px] gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                                >
+                                    <div>File Name</div>
+                                    <div>Document Type</div>
+                                    <div>Uploaded By</div>
+                                    <div>Uploaded Date</div>
+                                </div>
+                                <ng-container
+                                    *ngFor="let item of child.attachments"
+                                >
+                                    <div
+                                        class="grid grid-cols-[minmax(160px,_1fr)_200px_160px_120px] border-b gap-4 py-2 px-6"
+                                    >
+                                        <div>
+                                            <a
+                                                [openFile]="item"
+                                                class="underline cursor-pointer"
+                                                >{{ item.fileName }}</a
+                                            >
+                                        </div>
+                                        <div>
+                                            {{ item.documentTypeName }}
+                                        </div>
+                                        <div class="truncate">
+                                            {{ item.updatedUser }}
+                                        </div>
+                                        <div class="truncate">
+                                            {{
+                                                item.updatedDate
+                                                    | date : "dd/MM/yyyy HH:mm"
+                                            }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-template>
+        </mat-drawer>
+    </mat-drawer-container>
+</div>

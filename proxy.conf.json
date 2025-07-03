@@ -1,0 +1,22 @@
+{
+    "/api": {
+      "target": "https://localhost:6001/api",
+      "secure": false,
+      "pathRewrite": {"^/api" : ""}
+    },
+    "/download": {
+        "target": "https://localhost:6001/download",
+        "secure": false,
+        "pathRewrite": {"^/download" : ""}
+      },
+      "/Download": {
+        "target": "https://localhost:6001/download",
+        "secure": false,
+        "pathRewrite": {"^/Download" : ""}
+      },
+      "/Uploads": {
+        "target": "https://localhost:6001/Uploads",
+        "secure": false,
+        "pathRewrite": {"^/Uploads" : ""}
+      }
+  }

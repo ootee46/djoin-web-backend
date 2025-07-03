@@ -1,0 +1,36 @@
+app-dashboard {
+  .mat-tab-group {
+    .mat-tab-body-wrapper{
+      flex: 1 0;
+      background-color: #ffffff;
+      .mat-tab-body-content{
+        padding: 20px !important;
+        margin: 0px !important;
+      
+      }
+      
+    }
+    .mat-tab-header {
+      border-bottom: solid 1px #cccccc !important;
+      .mat-tab-label-container {
+        padding: 0 0px !important;
+        .mat-tab-list {
+          .mat-tab-labels {
+            .mat-tab-label {
+              margin-left: 0px !important;
+              border-left: solid 1px #cccccc !important;
+              border-radius: 0px !important;
+              
+            }
+            .mat-tab-label:last-child{
+              border-right: solid 1px #cccccc !important;
+            }
+            .mat-tab-label:first-child{
+              border-left: 0px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+<mat-form-field class="w-full  mb-4 {{class}}" [floatLabel]="'always'" >
+    <mat-label *ngIf="displayText">{{displayText}}</mat-label>
+    <mat-select
+    [disableOptionCentering]="true"
+    [disableRipple]="true"
+    [required]="isRequired"
+    [placeholder]="(placeholder ? placeholder : '')"
+    [multiple]="(multiple?true:false)"
+    [(ngModel)]="selectValue"
+    (selectionChange)="onSelectionChange($event)"
+    (valueChange)="returnValue($event)">
+        <mat-option><ngx-mat-select-search   [clearSearchInput]="showOnStart" noEntriesFoundLabel="Not found." placeholderLabel="" [formControl]="searchControl"></ngx-mat-select-search></mat-option>
+        <mat-option [value]="null" *ngIf="showAll">{{allText !== null ? allText : 'All'}}</mat-option>
+        <mat-option *ngFor="let item of optionFilter | async" [value]="item.value">{{item.text}}</mat-option>
+    </mat-select>
+</mat-form-field>

@@ -1,0 +1,61 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card" *ngIf="(data$ | async) as data">
+    <!-- Header -->
+    <div class="relative flex-0  py-4 border-b">
+        <!-- Title -->
+        <div class="text-3xl font-extrabold tracking-tight px-6">Agenda Reservation</div>
+        <div class="mt-1 px-6">
+            <div class="flex items-center space-x-2 ng-star-inserted">
+                <a class="text-primary cursor-pointer" [routerLink]="'../../'">Agenda Reservation List</a>
+                <div>/</div>
+                <div class="ng-star-inserted">Agenda Detail</div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <mat-drawer-container class="flex-auto sm:h-full">
+            <mat-drawer class="sm:w-80 dark:bg-gray-900" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened" #drawer>
+                <div class="flex flex-col divide-y border-t border-b">
+                    <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
+                        <div class="flex px-8 py-2 cursor-pointer" [ngClass]="{'hover:bg-gray-100 dark:hover:bg-hover': !selectedPanel || selectedPanel !== panel.id,
+                                    'bg-primary-50 dark:bg-hover': selectedPanel && selectedPanel === panel.id}" (click)="goToPanel(panel.id)">
+                            <div>
+                                <div class="font-medium leading-6" [ngClass]="{'text-primary dark:text-primary-500': selectedPanel && selectedPanel === panel.id}">
+                                    {{panel.title}}
+                                </div>
+                                <div class="mt-0.5 text-secondary">
+                                    {{panel.description}}
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </mat-drawer>
+            <mat-drawer-content class="flex flex-col">
+                <div class="flex-1 flex flex-col px-6 py-4 ">
+                    <!-- Panel header -->
+                    <div class="flex items-center">
+                        <button type="button" class="lg:hidden -ml-2" mat-icon-button (click)="drawer.toggle()">
+                            <mat-icon class="material-symbols-outlined">menu</mat-icon>
+                        </button>
+                        <div class="ml-2 lg:ml-0 text-2xl font-bold tracking-tight leading-none">
+                            {{getPanelInfo(selectedPanel).title}}
+                        </div>
+                    </div>
+                    <div class="mt-4 flex-1 relative bg-white">
+                        <ng-container [ngSwitch]="selectedPanel">
+                            <ng-container *ngSwitchCase="'info'">
+                                <app-request-info [data$]="data$"></app-request-info>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'team'">
+                                <app-owner-team [data$]="data$" [users$]="users$"></app-owner-team>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'upload-document'">
+                               <app-upload-document [data$]="data$" [users$]="users$" [documentTypes$]="documentTypes$"></app-upload-document>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </mat-drawer-content>
+        </mat-drawer-container>
+    </div>
+</div>

@@ -1,0 +1,198 @@
+<div class="flex flex-col  h-full absolute w-full" *ngIf="(data$ | async) as data">
+    <div class="p-6 flex-1 overflow-auto">
+        <div>
+            <div class="mt-2 border-b mb-2 font-medium">Presenters Documents (.png, .jpg, .pdf, .docx, .xlsx, .pptx &lt;= 50Mb)</div>
+            <div class="flex flex-row gap-4 mt-4">
+                <file-input #presenterAttachmentInput [displayText]="''"  [limitSize]="50" [acceptFile]="'.png,.jpg,.pdf,.docx,.xlsx,.pptx'"  [resetFileName]="true" [(ngModel)]="presenterAttachment" class="flex-1"></file-input>
+                <div><button type="button" (click)="addPresenterAttachment(data.id)" class="mt-2" mat-raised-button color="primary">Add</button></div>
+            </div>
+            <div class="mt-4">
+                <ng-container *ngIf="data.presenterAttachments">
+                    <ng-container *ngIf="data.presenterAttachments.length > 0; ">
+                        <div class="grid">
+                            <div class="grid grid-cols-[60px_minmax(160px,_1fr)_160px_120px] z-10  top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5" >
+                                <div>
+                                    Action
+                                </div>
+                                <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="setPresentersSort('fileName')"
+                            >
+                                File Name
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                        {{
+                                            sortPresenters.sort === "asc" && sortPresenters.fieldName === 'fileName'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="setPresentersSort('updatedUser')"
+                            >
+                                Uploaded By
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                        {{
+                                            sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedUser'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="setPresentersSort('updatedDate')"
+                            >
+                                Uploaded Date
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                        {{
+                                            sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedDate'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                            </div>
+                            <ng-container *ngFor="let item of sortArrayByField(
+                                data.presenterAttachments,
+                                sortPresenters.fieldName,
+                                sortPresenters.sort); ">
+                                <div class="grid grid-cols-[60px_minmax(160px,_1fr)_160px_120px] items-center gap-4 w-full py-2 px-6  border-b">
+                                    <div>
+                                        <button type="button" >
+                                            <mat-icon class="material-symbols-outlined mt-1" (click)="deleteAttachment(item.id)"  tile="Delete">delete</mat-icon>
+                                        </button>
+                                    </div>
+                                    <div class="truncate">
+                                        <a [openFile]="item" class="underline cursor-pointer">{{item.fileName}}</a>
+                                    </div>
+                                    <div class="truncate">
+                                        {{item.updatedUser}}
+                                    </div>
+                                    <div class="truncate">
+                                        {{item.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <div class="mt-8 border-b mb-2 font-medium">Attachements (.png, .jpg, .pdf, .docx, .xlsx, .pptx &lt;= 50Mb)</div>
+            <div class="flex flex-row gap-4 mt-4">
+                <file-input #attachmentInput [displayText]="''"  [limitSize]="50" [acceptFile]="'.png,.jpg,.pdf,.docx,.xlsx,.pptx'" [resetFileName]="true" [(ngModel)]="attachment" class="flex-1"></file-input>
+                <search-option [(ngModel)]="documentTypeId" [placeholder]="'Document Type'" [displayText]="''" [options$]="documentTypes$"  [value]="'id'" [text]="'name'" class="w-60"></search-option>
+                <div><button type="button" (click)="addAttachment(data.id)" class="mt-2" mat-raised-button color="primary">Add</button></div>
+            </div>
+            <div class="mt-4">
+                <ng-container *ngIf="data.attachments">
+                    <div class="mb-2 flex flex-row gap-4" *ngIf="data.attachments && data.attachments.length > 0">
+                        <div><button type="button" class="bg-sky-700 text-white" mat-raised-button (click)="openPermission(selectAttachments)" >Set Permission</button></div>
+                        <div><button type="button"  class="bg-red-700 text-white"  mat-raised-button (click)="multipleDeleteAttachment()">Delete</button></div>
+                    </div>
+                    <ng-container *ngIf="data.attachments.length > 0;">
+                        <div class="grid">
+                            <div class="grid grid-cols-[30px_50px_minmax(160px,_1fr)_200px_160px_120px] z-10  top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5" >
+                                <div>
+                                    <mat-checkbox [(ngModel)]="isAllCheck" (change)="toggleAllAttachment($event)"></mat-checkbox>
+                                </div>
+                                <div>
+                                    Action
+                                </div>
+                                <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="setAttachmentsSort('fileName')"
+                            >
+                                File Name
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                    {{"swap_vert"}}
+                                    </mat-icon>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="
+                                    setAttachmentsSort('documentTypeName')
+                                "
+                            >
+                                Document Type
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                    {{"swap_vert"}}
+                                    </mat-icon>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="setAttachmentsSort('updatedUser')"
+                            >
+                                Uploaded By
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                    {{"swap_vert"}}
+                                    </mat-icon>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 cursor-pointer"
+                                (click)="setAttachmentsSort('updatedDate')"
+                            >
+                                Uploaded Date
+                                    <mat-icon
+                                        class="material-symbols-outlined icon-size-4"
+                                    >
+                                    {{"swap_vert"}}
+                                    </mat-icon>
+                            </div>
+                            </div>
+                            <div cdkDropList class="cursor-move" [cdkDropListData]="data" (cdkDropListDropped)="attachmentDrop( $event)">
+                                <ng-container *ngFor="let item of data.attachments; let i = index; let last = last">
+                                    <div class="grid grid grid-cols-[30px_50px_minmax(160px,_1fr)_200px_160px_120px] items-center gap-4 w-full py-2 px-6  border-b bg-white" cdkDrag [cdkDragData]="item">
+                                        <div>
+                                            <mat-checkbox [checked]="isAttachmentCheck(item.id)"  (change)="checkAttachment($event, item)"></mat-checkbox>
+                                        </div>
+                                        <div>
+                                            <button mat-icon-button type="button" [matMenuTriggerFor]="moreMenu" aria-label="More" (click)="$event.stopPropagation();">
+                                                <mat-icon class="material-symbols-outlined" >more_vert</mat-icon>
+                                            </button>
+                                            <mat-menu #moreMenu="matMenu">
+                                                <button type="button" mat-menu-item (click)="openPermission([item])"><mat-icon class="material-symbols-outlined">lock</mat-icon> Set Permission</button>
+                                                <button *ngIf="i > 0" type="button" mat-menu-item (click)="move(item,i,i-1 )"><mat-icon class="material-symbols-outlined">arrow_upward</mat-icon> Move Up</button>
+                                                <mat-divider *ngIf="i > 0"></mat-divider>
+                                                <button *ngIf="!last" type="button" mat-menu-item (click)="move(item,i,i+1 )"><mat-icon class="material-symbols-outlined">arrow_downward</mat-icon> Move Down</button>
+                                                <mat-divider *ngIf="!last"></mat-divider>
+                                                <button type="button" mat-menu-item (click)="deleteAttachment(item.id)"><mat-icon class="material-symbols-outlined">delete</mat-icon> Delete</button>
+                                                <mat-divider></mat-divider>
+                                            </mat-menu>
+                                        </div>
+                                        <div class="truncate">
+                                            <a [openFile]="item" class="underline cursor-pointer">{{item.fileName}}</a>
+                                        </div>
+                                        <div>{{item.documentTypeName}}</div>
+                                        <div class="truncate">
+                                            {{item.updatedUser}}
+                                        </div>
+                                        <div class="truncate">
+                                            {{item.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="bg-gray-300 border p-4">
+        <button mat-raised-button class="bg-sky-700 text-white">Submit Document</button>
+    </div> -->
+</div>

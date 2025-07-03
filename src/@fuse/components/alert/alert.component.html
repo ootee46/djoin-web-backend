@@ -1,0 +1,75 @@
+<div
+    class="fuse-alert-container"
+    *ngIf="!dismissible || dismissible && !dismissed"
+    [@fadeIn]="!dismissed"
+    [@fadeOut]="!dismissed">
+
+    <!-- Border -->
+    <div
+        class="fuse-alert-border"
+        *ngIf="appearance === 'border'"></div>
+
+    <!-- Icon -->
+    <div
+        class="fuse-alert-icon"
+        *ngIf="showIcon">
+
+        <!-- Custom icon -->
+        <div class="fuse-alert-custom-icon">
+            <ng-content select="[fuseAlertIcon]"></ng-content>
+        </div>
+
+        <!-- Default icons -->
+        <div class="fuse-alert-default-icon">
+
+            <mat-icon
+                *ngIf="type === 'primary'" class="material-symbols-outlined">check_circle</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'accent'" class="material-symbols-outlined">check_circle</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'warn'" class="material-symbols-outlined">cancel</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'basic'" class="material-symbols-outlined">check_circle</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'info'" class="material-symbols-outlined">info</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'success'" class="material-symbols-outlined">check_circle</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'warning'" class="material-symbols-outlined">warning</mat-icon>
+
+            <mat-icon
+                *ngIf="type === 'error'" class="material-symbols-outlined">cancel</mat-icon>
+
+        </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="fuse-alert-content">
+
+        <div class="fuse-alert-title">
+            <ng-content select="[fuseAlertTitle]"></ng-content>
+        </div>
+
+        <div class="fuse-alert-message">
+            <ng-content></ng-content>
+        </div>
+
+    </div>
+
+    <!-- Dismiss button -->
+    <button
+        type="button"
+        class="fuse-alert-dismiss-button"
+        mat-icon-button
+        (click)="dismiss()">
+        <mat-icon class="material-symbols-outlined">close</mat-icon>
+    </button>
+
+</div>

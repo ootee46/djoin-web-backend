@@ -1,0 +1,87 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <div class="relative flex flex-col gap-4 sm:flex-row flex-0 sm:items-center sm:justify-between pt-4 pb-4 px-6 border-b">
+        <mat-form-field class="fuse-mat-no-subscript flex-1 ">
+            <mat-label>Keyword</mat-label>
+            <input matInput  [autocomplete]="'off'"  [(ngModel)]="searchQuery.kw" >
+        </mat-form-field>
+        <date-input [displayText]="'Date From'" [(ngModel)]="searchQuery.start_date" class="w-40" [showClear]="true"></date-input>
+        <date-input [displayText]="'Date To'"   [(ngModel)]="searchQuery.end_date" class="w-40" [showClear]="true"></date-input>
+        <div><button type="button" (click)="doSearch()" mat-raised-button color="primary" class="mt-6"> <mat-icon   class="icon-size-6 material-symbols-outlined">search</mat-icon>  Search </button></div>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-0 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(listData$ | async) as listData">
+                <ng-container *ngIf="listData.datas.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="z-10 sticky top-0 grid  grid-cols-[150px,minmax(100px,_1fr),200px,130px] gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div class="flex items-center gap-2 cursor-pointer"
+                                (click)="setTemplateSort('Type')" >
+                                Type
+                                    <mat-icon class="material-symbols-outlined icon-size-4">
+                                        {{
+                                            sortTemplate.sort === "asc" && sortTemplate.fieldName === 'Type'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                            <div class="flex items-center gap-2 cursor-pointer"
+                                (click)="setTemplateSort('FileName')" >
+                                File Name
+                                    <mat-icon class="material-symbols-outlined icon-size-4">
+                                        {{
+                                            sortTemplate.sort === "asc" && sortTemplate.fieldName === 'FileName'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                            <div class="flex items-center gap-2 cursor-pointer"
+                                (click)="setTemplateSort('Name')" >
+                                Name
+                                    <mat-icon class="material-symbols-outlined icon-size-4">
+                                        {{
+                                            sortTemplate.sort === "asc" && sortTemplate.fieldName === 'Name'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                            <div class="flex items-center gap-2 cursor-pointer text-center" (click)="setTemplateSort('CreatedDate')" >
+                                Date
+                                    <mat-icon class="material-symbols-outlined icon-size-4">
+                                        {{
+                                            sortTemplate.sort === "asc" && sortTemplate.fieldName === 'CreatedDate'
+                                                ? "arrow_upward"
+                                                : "arrow_downward"
+                                        }}
+                                    </mat-icon>
+                            </div>
+                        </div>
+                        <div>
+                            <ng-container *ngFor="let data of listData.datas;">
+                                <div class="grid  grid-cols-[150px,minmax(100px,_1fr),200px,130px]  items-center gap-4 w-full py-4 px-6  border-b ">
+                                    <div class="text-truncate">{{data.type}}</div>
+                                    <div class="font-truncate"><a class="cursor-pointer" [openFile]="data.fileUrl"><u>{{data.fileName}}</u></a></div>
+                                    <div class="font-truncate">{{data.name}}</div>
+                                    <div class="text-center">{{data.createdDate | date : 'dd/MM/yyyy HH:mm'}}</div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+                <mat-paginator #paginator
+                class=" sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                [ngClass]="{'pointer-events-none': isLoading}"
+                [length]="listData.totalRecord"
+                [pageIndex]="listData.page"
+                [pageSize]="listData.pageSize"
+                [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true">
+                </mat-paginator>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </div>
+</div>

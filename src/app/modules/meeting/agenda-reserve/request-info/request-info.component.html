@@ -1,0 +1,841 @@
+<form
+    #myForm="ngForm"
+    class="p-4"
+    *ngIf="data$ | async as data"
+    [formGroup]="dataForm"
+>
+    <div class="font-bold text-lg ml-2 mb-2">Overview</div>
+    <div class="p-4 rounded-2xl bg-gray-50 border mb-6">
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Request No.:</div>
+            <div class="flex-1">{{ data.documentNo }}</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Meeting Name:</div>
+            <div class="flex-1">{{ data.meetingTitle }}</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Meeting Date:</div>
+            <div class="flex-1">
+                {{ data.startDate | date : "dd/MM/yyyy" }}
+                {{ data.startDate | date : "HH:mm" }}
+                <span *ngIf="data.endDate">
+                    - {{ data.endDate | date : "HH:mm" }}
+                </span>
+            </div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Agenda Name:</div>
+            <div class="flex-1">{{ data.title }}</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Objective:</div>
+            <div class="flex-1">{{ data.agendaObjectiveName }}</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Confidential Level:</div>
+            <div class="flex-1">{{ data.agendaConfidentialName }}</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Request Date:</div>
+            <div class="flex-1">
+                {{ data.createdDate | date : "dd/MM/yyyy HH:mm" }}
+            </div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Agenda Status:</div>
+            <div class="flex-1">{{ data.approveStatus }}</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Require Voting:</div>
+            <div class="flex-1" *ngIf="data.isVote === true">Yes</div>
+            <div class="flex-1" *ngIf="data.isVote === false">No</div>
+        </div>
+        <div class="flex flex-row gap-4 mb-2">
+            <div class="w-40 font-semibold">Vote Open:</div>
+            <div class="flex-1" *ngIf="data.isVoteOpen === true">Yes</div>
+            <div class="flex-1" *ngIf="data.isVoteOpen === false">No</div>
+        </div>
+    </div>
+    <ng-container *ngIf="(this.data.isOwner || data.isAgendaWorkingTeam) && this.data.isEdit">
+        <div class="font-bold text-lg ml-2 mb-2">Agenda Details</div>
+        <div class="p-4 rounded-2xl bg-gray-50 border mb-6">
+            <div class="flex flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript flex-1">
+                    <mat-label>Agenda Name</mat-label>
+                    <input formControlName="title" matInput />
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-40">
+                    <mat-label>Estimate Time (Mins)</mat-label>
+                    <input
+                        type="number"
+                        [min]="0"
+                        formControlName="useTime"
+                        matInput
+                    />
+                </mat-form-field>
+            </div>
+            <mat-form-field class="fuse-mat-no-subscript w-full mb-6">
+                <mat-label>Agenda Description</mat-label>
+                <textarea matInput formControlName="description"></textarea>
+            </mat-form-field>
+            <div class="flex flex-row gap-4">
+                <search-option
+                    formControlName="agendaObjectiveId"
+                    [placeholder]="null"
+                    [displayText]="'Objective'"
+                    [options$]="objectives$"
+                    [value]="'id'"
+                    [text]="'title'"
+                    class="w-full"
+                ></search-option>
+                <search-option
+                    formControlName="agendaConfidentialId"
+                    [placeholder]="null"
+                    [displayText]="'Confidential Level'"
+                    [options$]="confidentials$"
+                    [value]="'id'"
+                    [text]="'title'"
+                    class="w-full"
+                ></search-option>
+            </div>
+            <mat-form-field class="fuse-mat-no-subscript w-full mb-6">
+                <mat-label>Booking Details</mat-label>
+                <textarea matInput formControlName="bookingDetail"></textarea>
+            </mat-form-field>
+            <div class="flex flex-row gap-4 mb-4">
+                <mat-slide-toggle formControlName="isVote"
+                    >Voting Required.</mat-slide-toggle
+                >
+                <mat-slide-toggle formControlName="isVoteOpen"
+                    >Vote Open.</mat-slide-toggle
+                >
+            </div>
+        </div>
+    </ng-container>
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-4">
+        <div class="flex-1">
+           <div class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer" (click)="isBookingDetail = !isBookingDetail">
+              <div class="font-semibold">Booking Detail</div>
+              <button type="button" *ngIf="isBookingDetail">[-]</button>
+              <button type="button" *ngIf="!isBookingDetail">[+]</button>
+           </div>
+           <div class="flex flex-col p-4 border-x border-b overflow-hidden" *ngIf="isBookingDetail">
+              <div class="overflow-auto">
+                    <ng-container *ngIf="bookingDetail else noDatas" >
+                            <div class="flex flex-wrap gap-4">
+                                {{bookingDetail}}
+                            </div>
+                    </ng-container>
+                    <ng-template #noDatas>
+                        <div class="p-8 border-t font-semibold tracking-tight text-center">
+                            Record not found!
+                        </div>
+                    </ng-template>
+              </div>
+           </div>
+        </div>
+     </div>
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-4">
+        <div class="flex-1">
+           <div class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer" (click)="isRelationBookingPanel = !isRelationBookingPanel">
+              <div class="font-semibold">Related Booking</div>
+              <button type="button" *ngIf="isRelationBookingPanel">[-]</button>
+              <button type="button" *ngIf="!isRelationBookingPanel">[+]</button>
+           </div>
+           <div class="flex flex-col p-4 border-x border-b overflow-hidden" *ngIf="isRelationBookingPanel">
+              <div class="overflow-auto">
+                    <ng-container *ngIf="relation">
+                        <ng-container *ngIf="relation.length > 0; else noDatas">
+                            <div class="flex flex-wrap gap-4">
+                                <ng-container *ngFor="let item of relation; ">
+                                    <div class="p-4 rounded-2xl bg-gray-50 border mb-2" style="flex: 1 1 calc(50% - 1rem); max-width: calc(50% - 1rem);">
+                                        <div class="flex flex-row gap-4 mb-2">
+                                            <div class="w-40 font-semibold">Request No.:</div>
+                                            <div class="flex-1">{{item.requestNo}}</div>
+                                        </div>
+                                        <div class="flex flex-row gap-4 mb-2">
+                                            <div class="w-40 font-semibold">Meeting Name:</div>
+                                            <div class="flex-1">{{item.meetingName}}</div>
+                                        </div>
+                                        <div class="flex flex-row gap-4 mb-2">
+                                            <div class="w-40 font-semibold">Meeting Date:</div>
+                                            <div class="flex-1">{{item.startDate | date : "dd/MM/yyyy"}} {{item.startDate | date : "HH:mm"}} <span *ngIf="item.endDate"> - {{item.endDate | date : "HH:mm"}} </span></div>
+                                        </div>
+                                        <div class="flex flex-row gap-4 mb-2">
+                                            <div class="w-40 font-semibold">Objective:</div>
+                                            <div class="flex-1">{{item.objective}}</div>
+                                        </div>
+                                        <div class="flex flex-row gap-4 mb-2">
+                                            <div class="w-40 font-semibold">Confidential Level:</div>
+                                            <div class="flex-1">{{item.confidential}}</div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+              </div>
+           </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 mb-4 ">
+        <div class="flex-1">
+            <div
+                class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer"
+                (click)="isPresenterPanel = !isPresenterPanel"
+            >
+                <div class="font-semibold">Presenters</div>
+                <button type="button" *ngIf="isPresenterPanel">[-]</button>
+                <button type="button" *ngIf="!isPresenterPanel">[+]</button>
+            </div>
+            <div
+                class="h-60 flex flex-col p-4 border-x border-b overflow-hidden"
+                *ngIf="isPresenterPanel"
+            >
+                <div
+                    *ngIf="(data.isOwner || data.isAgendaWorkingTeam) && data.isEdit"
+                    class="flex flex-row gap-2 justify-center"
+                >
+                    <search-option
+                        class="flex-1"
+                        [(ngModel)]="selectPresenter"
+                        [ngModelOptions]="{ standalone: true }"
+                        [displayText]="null"
+                        [options$]="optionPresenters$"
+                        [value]="'id'"
+                        [text]="'name'"
+                        [placeholder]="'Select Presenter'"
+                        [showAll]="false"
+                    ></search-option>
+                    <button
+                        type="button"
+                        mat-raised-button
+                        class="bg-sky-700 text-white mt-1"
+                        (click)="addPresenter()"
+                    >
+                        Add
+                    </button>
+                </div>
+                <div class="overflow-auto">
+                    <ng-container *ngIf="selectPresenters">
+                        <ng-container
+                            *ngIf="selectPresenters.length > 0; else noDatas"
+                        >
+                            <div class="grid" *ngIf="(data.isOwner || data.isAgendaWorkingTeam)">
+                                <div
+                                    [ngClass]="{
+                                        'grid-cols-[60px,minmax(120px,_1fr)]':
+                                            (data.isOwner || data.isAgendaWorkingTeam) && data.isEdit,
+                                        'grid-cols-[minmax(120px,_1fr)]':
+                                            !(data.isOwner || data.isAgendaWorkingTeam) ||
+                                            (data.isSubmitted === true &&
+                                                data.isReview === false)
+                                    }"
+                                    class="z-10 sticky top-0 grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                >
+                                    <div *ngIf="(data.isOwner || data.isAgendaWorkingTeam) && data.isEdit">
+                                        Action
+                                    </div>
+                                    <div>Name</div>
+                                </div>
+                                <ng-container
+                                    *ngFor="let item of selectPresenters"
+                                >
+                                    <div
+                                        [ngClass]="{
+                                            'grid-cols-[60px,minmax(120px,_1fr)]':
+                                                (data.isOwner || data.isAgendaWorkingTeam) && data.isEdit,
+                                            'grid-cols-[minmax(120px,_1fr)]':
+                                                !(data.isOwner || data.isAgendaWorkingTeam) ||
+                                                (data.isSubmitted === true &&
+                                                    data.isReview === false)
+                                        }"
+                                        class="grid items-center gap-4 w-full py-2 px-6 border-b"
+                                    >
+                                        <div
+                                            *ngIf="(data.isOwner || data.isAgendaWorkingTeam) && data.isEdit"
+                                        >
+                                            <button
+                                                type="button"
+                                                (click)="removePresenter(item)"
+                                            >
+                                                <mat-icon
+                                                    tile="Delete"
+                                                    class="material-symbols-outlined mt-1"
+                                                    >delete</mat-icon
+                                                >
+                                            </button>
+                                        </div>
+                                        <div class="truncate">
+                                            {{ item.name }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+
+                            <div class="grid" *ngIf="!(data.isOwner || data.isAgendaWorkingTeam)">
+                                <div
+                                    class="z-10 sticky top-0 grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                >
+                                    <div>Name</div>
+                                </div>
+                                <ng-container
+                                    *ngFor="let item of selectPresenters"
+                                >
+                                    <div
+                                        class="grid items-center gap-4 w-full py-2 px-6 border-b"
+                                    >
+                                        <div class="truncate">
+                                            {{ item.name }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noDatas>
+                        <div class="p-4 border-t tracking-tight text-center">
+                            Record not found!
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1">
+            <div
+                class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer"
+                (click)="isExcludeUserPanel = !isExcludeUserPanel"
+            >
+                <div class="font-semibold">Exclude Attendee</div>
+                <button type="button" *ngIf="isExcludeUserPanel">[-]</button>
+                <button type="button" *ngIf="!isExcludeUserPanel">[+]</button>
+            </div>
+            <div
+                class="h-60 p-4 border-x border-b flex flex-col"
+                *ngIf="isExcludeUserPanel"
+            >
+                <div
+                    *ngIf="(data.isOwner || data.isAgendaWorkingTeam) && data.isEdit"
+                    class="flex flex-row gap-2 justify-center"
+                >
+                    <search-option
+                        class="flex-1"
+                        [displayText]="null"
+                        [options$]="optionExcludeUsers$"
+                        [(ngModel)]="selectExcludeUser"
+                        [ngModelOptions]="{ standalone: true }"
+                        [value]="'id'"
+                        [text]="'name'"
+                        [placeholder]="'Select Exclude User'"
+                        [allText]="'All Group'"
+                        [showAll]="false"
+                    ></search-option>
+                    <button
+                        type="button"
+                        mat-raised-button
+                        class="bg-sky-700 text-white mt-1"
+                        (click)="addExcludeUser()"
+                    >
+                        Add
+                    </button>
+                </div>
+                <div class="overflow-auto">
+                    <ng-container *ngIf="selectExcludeUsers">
+                        <ng-container
+                            *ngIf="selectExcludeUsers.length > 0; else noDatas"
+                        >
+                            <div class="grid" *ngIf="(data.isOwner || data.isAgendaWorkingTeam)">
+                                <div
+                                    [ngClass]="{
+                                        'grid-cols-[60px,minmax(120px,_1fr)]':
+                                            (data.isOwner || data.isAgendaWorkingTeam) && data.isEdit,
+                                        'grid-cols-[minmax(120px,_1fr)]':
+                                            !(data.isOwner || data.isAgendaWorkingTeam) ||
+                                            (data.isSubmitted === true &&
+                                                data.isReview === false)
+                                    }"
+                                    class="grid z-10 sticky top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                >
+                                    <div *ngIf="(data.isOwner || data.isAgendaWorkingTeam) && data.isEdit">
+                                        Action
+                                    </div>
+                                    <div>Name</div>
+                                </div>
+                                <ng-container
+                                    *ngFor="let item of selectExcludeUsers"
+                                >
+                                    <div
+                                        [ngClass]="{
+                                            'grid-cols-[60px,minmax(120px,_1fr)]':
+                                                (data.isOwner || data.isAgendaWorkingTeam) && data.isEdit,
+                                            'grid-cols-[minmax(120px,_1fr)]':
+                                                !(data.isOwner || data.isAgendaWorkingTeam) ||
+                                                (data.isSubmitted === true &&
+                                                    data.isReview === false)
+                                        }"
+                                        class="grid items-center gap-4 w-full py-2 px-6 border-b"
+                                    >
+                                        <div
+                                            *ngIf="(data.isOwner || data.isAgendaWorkingTeam) && data.isEdit"
+                                        >
+                                            <button
+                                                type="button"
+                                                (click)="
+                                                    removeExcludeUser(item)
+                                                "
+                                            >
+                                                <mat-icon
+                                                    tile="Delete"
+                                                    class="material-symbols-outlined mt-1"
+                                                    >delete</mat-icon
+                                                >
+                                            </button>
+                                        </div>
+                                        <div class="truncate">
+                                            {{ item.name }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+
+                            <div class="grid" *ngIf="!(data.isOwner || data.isAgendaWorkingTeam)">
+                                <div
+                                    class="z-10 sticky top-0 grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5"
+                                >
+                                    <div>Name</div>
+                                </div>
+                                <ng-container
+                                    *ngFor="let item of selectExcludeUsers"
+                                >
+                                    <div
+                                        class="grid items-center gap-4 w-full py-2 px-6 border-b"
+                                    >
+                                        <div class="truncate">
+                                            {{ item.name }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="border mb-4" *ngIf="data.isReview === false">
+        <div
+            class="border-b font-medium bg-gray-100 py-2 px-2 flex flex-row justify-between cursor-pointer"
+            (click)="isPresenterDocumentPanel = !isPresenterDocumentPanel"
+        >
+            <div class="font-semibold">Presenters Documents</div>
+            <span *ngIf="isPresenterDocumentPanel">[-]</span>
+            <span *ngIf="!isPresenterDocumentPanel">[+]</span>
+        </div>
+        <ng-container *ngIf="isPresenterDocumentPanel">
+            <div class="p-4">
+                <ng-container *ngIf="data.presenterAttachments">
+                    <ng-container
+                        *ngIf="
+                            data.presenterAttachments.length > 0;
+                            else noDatas
+                        "
+                    >
+                        <div class="grid">
+                            <div
+                                class="grid grid-cols-[minmax(160px,_1fr)_160px_120px] z-10 sticky top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                            >
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setPresentersSort('fileName')"
+                                >
+                                    File Name
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'fileName'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setPresentersSort('updatedUser')"
+                                >
+                                    Uploaded By
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedUser'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setPresentersSort('updatedDate')"
+                                >
+                                    Uploaded Date
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedDate'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                            </div>
+                            <ng-container
+                                *ngFor="
+                                    let item of sortArrayByField(
+                                        data.presenterAttachments,
+                                        sortPresenters.fieldName,
+                                        sortPresenters.sort
+                                    )
+                                "
+                            >
+                                <div
+                                    class="grid grid-cols-[minmax(160px,_1fr)_160px_120px] items-center gap-4 w-full py-2 px-6 border-b"
+                                >
+                                    <div class="truncate">
+                                        <a
+                                            [openFile]="item"
+                                            class="underline cursor-pointer"
+                                            >{{ item.fileName }}</a
+                                        >
+                                    </div>
+                                    <div class="truncate">
+                                        {{ item.updatedUser }}
+                                    </div>
+                                    <div class="truncate">
+                                        {{
+                                            item.updatedDate
+                                                | date : "dd/MM/yyyy HH:mm"
+                                        }}
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </ng-container>
+    </div>
+
+    <div class="border mb-4" *ngIf="data.isReview === false">
+        <div
+            class="border-b font-medium bg-gray-100 py-2 px-2 flex flex-row justify-between cursor-pointer"
+            (click)="isAttachmentPanel = !isAttachmentPanel"
+        >
+            <div class="font-semibold">Attachments</div>
+            <span type="button" *ngIf="isAttachmentPanel">[-]</span>
+            <span type="button" *ngIf="!isAttachmentPanel">[+]</span>
+        </div>
+        <ng-container *ngIf="isAttachmentPanel">
+            <div class="p-4">
+                <ng-container *ngIf="data.attachments">
+                    <ng-container
+                        *ngIf="data.attachments.length > 0; else noDatas"
+                    >
+                        <div class="grid">
+                            <div
+                                class="grid grid-cols-[50px_minmax(160px,_1fr)_200px_160px_120px] z-10 sticky top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50"
+                            >
+                                <div>Action</div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setAttachmentsSort('fileName')"
+                                >
+                                    File Name
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortAttachments.sort === "asc" && sortAttachments.fieldName === 'fileName'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="
+                                        setAttachmentsSort('documentTypeName')
+                                    "
+                                >
+                                    Document Type
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortAttachments.sort === "asc" && sortAttachments.fieldName === 'documentTypeName'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setAttachmentsSort('updatedUser')"
+                                >
+                                    Uploaded By
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortAttachments.sort === "asc" && sortAttachments.fieldName === 'updatedUser'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setAttachmentsSort('updatedDate')"
+                                >
+                                    Uploaded Date
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortAttachments.sort === "asc" && sortAttachments.fieldName === 'updatedDate'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                            </div>
+                            <div>
+                                <ng-container
+                                    *ngFor="
+                                        let item of sortArrayByField(
+                                            data.attachments,
+                                            sortAttachments.fieldName,
+                                            sortAttachments.sort
+                                        )
+                                    "
+                                >
+                                    <div
+                                        class="grid grid-cols-[50px_minmax(160px,_1fr)_200px_160px_120px] items-center gap-4 w-full py-0 px-6 border-b bg-white"
+                                    >
+                                        <div>
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                [matMenuTriggerFor]="moreMenu"
+                                                aria-label="More"
+                                                (click)="
+                                                    $event.stopPropagation()
+                                                "
+                                            >
+                                                <mat-icon
+                                                    class="material-symbols-outlined"
+                                                    >more_vert</mat-icon
+                                                >
+                                            </button>
+                                            <mat-menu #moreMenu="matMenu">
+                                                <button
+                                                    type="button"
+                                                    mat-menu-item
+                                                    (click)="
+                                                        openPermission(item)
+                                                    "
+                                                >
+                                                    <mat-icon
+                                                        class="material-symbols-outlined"
+                                                        >lock</mat-icon
+                                                    >
+                                                    View Permission
+                                                </button>
+                                                <mat-divider></mat-divider>
+                                            </mat-menu>
+                                        </div>
+                                        <div class="truncate">
+                                            <a
+                                                [openFile]="item"
+                                                class="underline cursor-pointer"
+                                                >{{ item.fileName }}</a
+                                            >
+                                        </div>
+                                        <div>{{ item.documentTypeName }}</div>
+                                        <div class="truncate">
+                                            {{ item.updatedUser }}
+                                        </div>
+                                        <div class="truncate">
+                                            {{
+                                                item.updatedDate
+                                                    | date : "dd/MM/yyyy HH:mm"
+                                            }}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </ng-container>
+    </div>
+    <ng-container *ngIf="data.isSubmitted === false && data.steps">
+        <div class="pt-6 pb-6">
+            <div class="mt-8 border-b mb-2 font-semibold">Approver Steps</div>
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <td class="text-center w-10">No</td>
+                        <td class="text-center">Description</td>
+                        <td class="text-center w-60">Response By</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data.steps; let i = index">
+                        <td class="text-center">{{ i + 1 }}</td>
+                        <td>{{ item.stepName }}</td>
+                        <td class="flex-none">
+                            <ng-container
+                                *ngFor="let item2 of item.responseNames"
+                            >
+                                <div>- {{ item2 }}</div>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="data.approvers && data.approvers.length > 0">
+        <div class="mt-8 border-b mb-2 font-medium">Agenda Status</div>
+        <div class="mb-8" *ngIf="data.approvers">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <td class="text-center">Description</td>
+                        <td class="text-center w-36">Date</td>
+                        <td class="text-center w-60">Action By</td>
+                        <td class="text-center w-36">Status</td>
+                        <td class="text-center">Remark</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data.approvers">
+                        <td>{{ item.stepName }}</td>
+                        <td>
+                            <span *ngIf="item.actionDate">{{
+                                item.actionDate | date : "dd/MM/yyyy HH:mm"
+                            }}</span>
+                        </td>
+                        <td>{{ item.approverName }}</td>
+                        <td>{{ item.action }}</td>
+                        <td>{{ item.remark }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
+    <ng-template #noDatas>
+        <div class="p-8 border-t font-semibold tracking-tight text-center">
+            Record not found!
+        </div>
+    </ng-template>
+    <div class="mt-6 mb-8 flex flex-row gap-4">
+        <button
+            [disabled]="dataForm.invalid"
+            *ngIf="
+                ((data.isOwner || data.isAgendaWorkingTeam) || data.isAgendaWorkingTeam) &&
+                (!data.isSubmitted || data.isReviewed || data.isEdit)
+            "
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="update()"
+        >
+            Save Draft
+        </button>
+        <button
+            [disabled]="dataForm.invalid"
+            *ngIf="data.isOwner && !data.isSubmitted"
+            type="button"
+            mat-raised-button
+            class="bg-red-600 text-white"
+            (click)="submit()"
+        >
+            Submit
+        </button>
+        <button
+            [disabled]="dataForm.invalid"
+            *ngIf="data.isOwner && data.isEdit && data.isReview"
+            type="button"
+            mat-raised-button
+            class="bg-red-600 text-white"
+            (click)="reSubmit()"
+        >
+            Re-Booking
+        </button>
+        <button
+            [disabled]="dataForm.invalid"
+            *ngIf="
+                (data.isOwner || data.isAgendaWorkingTeam) && 
+                data.isReviewed
+            "
+            type="button"
+            mat-raised-button
+            class="bg-red-600 text-white"
+            (click)="documentSubmit()"
+        >
+            Document Submit
+        </button>
+        <button
+            [disabled]="dataForm.invalid"
+            *ngIf="
+                (data.approveStatus === 'Rejected' ||
+                    data.approveStatus === 'Approved Edit') &&
+                data.isOwner &&
+                data.reserveRejectType !== 1 &&
+                !data.isReview
+            "
+            type="button"
+            mat-raised-button
+            color="primary"
+            class="bg-red-600 text-white"
+            (click)="reSubmit()"
+        >
+            Re-Submit
+        </button>
+        <button
+            [disabled]="dataForm.invalid"
+            (click)="requestCancel()"
+            *ngIf="
+                (data.isOwner || data.isAgendaWorkingTeam) && 
+                data.requestType === 0
+            "
+            type="button"
+            mat-raised-button
+            class="bg-gray-600 text-white"
+        >
+            Request for Cancel
+        </button>
+        <button
+            [disabled]="dataForm.invalid"
+            (click)="requestEdit()"
+            *ngIf="
+                data.isOwner &&
+                !data.isReviewed &&
+                !data.isEdit &&
+                data.requestType === 0
+            "
+            type="button"
+            mat-raised-button
+            class="bg-yellow-600 text-white"
+        >
+            Request for Edit
+        </button>
+    </div>
+</form>

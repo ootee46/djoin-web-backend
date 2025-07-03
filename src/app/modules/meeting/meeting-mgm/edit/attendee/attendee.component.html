@@ -1,0 +1,90 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <!-- Header -->
+    <div class="relative flex flex-col gap-4 sm:flex-row flex-0 sm:items-center sm:justify-between pt-4 px-6 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <search-option [(ngModel)]="groupId" (selectionChange)="getUser($event.value)" 
+            class="flex-1" 
+            [displayText]="'Member Groups'" 
+            [options$]="userGroups$" 
+            [value]="'id'" 
+            [text]="'name'" 
+            [placeholder]="'All Groups'"
+            [allText]="'All Groups'"
+            [showAll]="true"></search-option>
+        <search-option 
+            [(ngModel)]="userId"  
+            class="flex-1" 
+            [displayText]="'Member Users'" 
+            [options$]="users$" 
+            [value]="'id'" 
+            [text]="'name'" 
+            [allText]="'All Users'"
+            [showAll]="true"
+            [placeholder]="'All Users'" ></search-option>
+        <div>
+            <button type="button" (click)="addUser()" [disabled]="!userId && !groupId" mat-raised-button color="primary" class="mb-4 mt-4"> Add </button>
+        </div>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-0 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(listData$ | async) as listData">
+                <ng-container *ngIf="listData.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="z-10 sticky top-0 grid  grid-cols-[40px,minmax(100px,_1fr),250px,200px,60px,60px] gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5" >
+                            <div>
+                                Action
+                            </div>
+                            <div>
+                                Name
+                            </div>
+                            <div>
+                                Email
+                            </div>
+                            <div>
+                                Member Group
+                            </div>
+                            <div>
+                                Chairman
+                            </div>
+                            <div>
+                                Secretary
+                            </div>
+                        </div>
+                        <ng-container *ngFor="let data of listData; trackBy: trackByFn">
+                            <div class="grid  grid-cols-[40px,minmax(100px,_1fr),250px,200px,60px,60px] items-center gap-4 w-full py-2 px-6  border-b">
+                                <div class="flex flex-row gap-2">
+                                    <button type="button" (click)="deleteData(data)" [matTooltip]="'Delete'">
+                                        <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="truncate">
+                                    {{data.firstName}} {{data.lastName}}
+                                </div>
+                                <div class="truncate">
+                                    {{data.email}}
+                                </div>
+                                <div >
+                                   <ng-container *ngFor="let item of data.userGroup">
+                                    • {{item}} <br>
+                                   </ng-container>
+                                </div>
+                                <div class="text-center">
+                                    <mat-slide-toggle (change)="toggleChirman($event,data.id)"  [(ngModel)]="data.isChairman" [color]="'primary'"></mat-slide-toggle>
+                                </div>
+                                <div class="text-center">
+                                    <mat-slide-toggle   (change)="toggleSecretary($event,data.id)"  [(ngModel)]="data.isSecretary" [color]="'primary'"></mat-slide-toggle>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </div>
+</div>

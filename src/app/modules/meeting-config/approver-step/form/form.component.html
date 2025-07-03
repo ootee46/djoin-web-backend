@@ -1,0 +1,72 @@
+<form #myForm="ngForm"   [formGroup]="dataForm" (submit)="saveData()">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-4 m-0 flex-none" >
+        <div>
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Name</mat-label>
+                <input matInput [formControlName]="'title'" [placeholder]="'Name'" maxlength="90">
+            </mat-form-field>
+        </div>
+        <div class="border-b font-bold mt-4 mb-4">Steps *</div>
+        <div>
+            <button mat-raised-button color="primary" (click)="create()" type="button">Create Step</button>
+        </div>
+        <div *ngIf="steps && steps.length > 0" class="mt-4 w-full">
+            <table class="table w-full">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="w-20">Action</th>
+                        <th>Name</th>
+                        <th  class="w-40">Type</th>
+                        <th  class="w-40">Approver Type</th>
+                        <th class="w-100">Approver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of steps; let index = index">
+                        <td>
+                            <div class="flex flex-row gap-2 justify-center">
+                                <button type="button" (click)="edit(item,index)" tile="Edit">
+                                    <mat-icon title="Edit" class="material-symbols-outlined">edit_square</mat-icon>
+                                </button>
+                                <button type="button" (click)="deleteData(item)">
+                                    <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                        <td>{{item.title}}</td>
+                        <td>{{item.stepType}}</td>
+                        <td>{{item.type}}</td>
+                        <td>
+                            <span *ngIf="item.type === 'User'">{{item.name}}</span>
+                            <span *ngIf="item.type === 'Approver Team'">{{item.approverGroupName}}</span>
+                            <span *ngIf="item.type === 'Approver Position'">{{item.approverPositionName}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-6">
+            <mat-slide-toggle  [formControlName]="'active'"  [color]="'primary'">Active</mat-slide-toggle>
+        </div>
+    </div>
+    <div mat-dialog-actions class="m-0 py-4 px-4 mat-primary bg-gray-100">
+        <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid" >
+            <mat-icon class="material-symbols-outlined mr-1">save</mat-icon>
+            <span *ngIf="!dataForm.disabled">
+                Save
+            </span>
+            <mat-progress-spinner
+                *ngIf="dataForm.disabled"
+                [diameter]="24"
+                [mode]="'indeterminate'"></mat-progress-spinner>
+        </button>
+    </div>
+</form>

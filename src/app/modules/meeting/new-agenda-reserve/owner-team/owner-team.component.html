@@ -1,0 +1,41 @@
+<div class="p-6 ">
+    <ng-container *ngIf="(data$ | async) as data">
+        <div class="mb-4">
+            <div class="flex flex-row gap-2 justify-center " *ngIf="data.isOwner && (data.isSubmitted === false || data.isReview === true)">
+                <search-option *ngIf="(users$ | async) as users" [(ngModel)]="selectedTeam" class="flex-1" [displayText]="null" [options$]="optionUsers$" [value]="'id'" [text]="'name'"  [placeholder]="'Select Users'" [showAll]="false"></search-option>
+                <button type="button" mat-raised-button class="bg-sky-700 text-white " (click)="addTeam(data.id)">Add</button>
+            </div>
+            <div class="-mt-4" *ngIf="data.isOwner && (data.isSubmitted === false || data.isReview === true)">Select users for assignment.</div>
+        </div>
+        <div class="overflow-auto">
+            <ng-container *ngIf="data.teams && data.teams.length; else noDatas">
+                <div class="grid">
+                    <div [ngClass]="{' style1-grid ':data.isOwner && (data.isSubmitted === false || data.isReview === true)}" class="z-10 sticky top-0 grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                        <div *ngIf="data.isOwner && (data.isSubmitted === false || data.isReview === true)">
+                            Action
+                        </div>
+                        <div>
+                            Name
+                        </div>
+                    </div>
+                    <ng-container *ngFor="let item of data.teams; ">
+                        <div [ngClass]="{' style1-grid ':data.isOwner && (data.isSubmitted === false || data.isReview === true)}" class=" grid items-center gap-4 w-full py-2 px-6  border-b">
+                            <div *ngIf="data.isOwner && (data.isSubmitted === false || data.isReview === true)">
+                                <button type="button" (click)="removeTeam(data.id, item.id)">
+                                    <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                </button>
+                            </div>
+                            <div class="truncate">
+                                {{item.name}}
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+
+            <ng-template #noDatas>
+                <div class="p-8  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </ng-container>
+</div>

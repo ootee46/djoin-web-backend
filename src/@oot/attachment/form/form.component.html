@@ -1,0 +1,33 @@
+<form #myForm="ngForm" [formGroup]="dataForm" (submit)="saveData()">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="material-symbols-outlined" >close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-4 m-0 flex-none" >
+        <div>
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>File Description</mat-label>
+                <input matInput [formControlName]="'title'" maxlength="100" >
+            </mat-form-field>
+        </div>
+        <div class="mt-6">
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Upload File</mat-label>
+                <mat-icon matSuffix  class="secondary-text" style="cursor: pointer" (click)="openFile()">attach_file</mat-icon>
+                <a title="View Attachment File"  *ngIf="dataForm && dataForm.get('fileUrl') && dataForm.get('fileUrl').value " [href]="dataForm.get('fileUrl').value" class="pr-1 mt-1" matPrefix  target="_blank" ><mat-icon class="material-symbols-outlined">search</mat-icon></a>
+                <input matInput  [formControlName]="'fileName'" style="cursor: pointer"  (click)="openFile()" >
+                <input #myFile type="file" style="display:none;" [accept]="(acceptFile?acceptFile:'.jpg,.png,.pdf,.docx,.xlsx,.pptx')" (change)="onFileSelected($event)">
+            </mat-form-field>
+            <mat-progress-bar [style.display]="(startUpload?'block':'none') " class="w-full -mt-2 " [color]="'warn'" [mode]='"indeterminate"' [value]="uploadProgress" [bufferValue]="0"></mat-progress-bar>
+        </div>
+    </div>
+    <div mat-dialog-actions class="m-0 py-4 px-4 mat-primary bg-gray-100">
+        <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid" >
+            Save
+        </button>
+    </div>
+</form>

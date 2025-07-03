@@ -1,0 +1,127 @@
+<form #myForm="ngForm" class="flex flex-col w-full h-full min-h-[600px]" [formGroup]="dataForm" (submit)="saveData()">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-4 m-0 flex flex-1  flex-col w-full">
+        <div class="flex flex-row gap-4 items-center justify-center">
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Name</mat-label>
+                <input matInput [formControlName]="'name'" maxlength="90" [placeholder]="'Name'">
+            </mat-form-field>
+            <!-- <mat-form-field class="fuse-mat-no-subscript w-40">
+                <mat-label>Color</mat-label>
+                <input matInput [formControlName]="'color'" [readonly]="true" [placeholder]="'Color'">
+            </mat-form-field> -->
+            <input [(colorPicker)]="roomColor" class="w-10 h-10 mt-6 cursor-pointer" [cpAlphaChannel]="'disabled'" (colorPickerChange)="changeColor($event)" [style.background]="roomColor" />
+        </div>
+        <div class="mt-2">
+            <mat-slide-toggle [formControlName]="'active'" [color]="'primary'">Active</mat-slide-toggle>
+        </div>
+        <div class="mt-4 mb-4 border-t"></div>
+        <div class="w-full">
+            <div class="text-xl">Select Users</div>
+            <div class="text-secondary">Select user into this group.</div>
+        </div>
+        <div class="grid  gap-4 mt-2 grid-cols-2 overflow-hidden">
+            <div>
+                <p class="font-bold">Admin Users</p>
+                <mat-form-field class="fuse-mat-dense mt-2 fuse-mat-no-subscript fuse-mat-rounded w-full mb-2">
+                    <mat-icon class="icon-size-5 material-symbols-outlined" matPrefix>search</mat-icon>
+                    <input matInput [(ngModel)]="kw" [autocomplete]="'off'" [ngModelOptions]="{standalone: true}"  (keydown.enter)="$event.preventDefault()" (keyup.enter)=" filterAdminUser() ">
+                    <button type="button" mat-icon-button *ngIf="kw" (click)="clearSearch()" matSuffix>
+                        <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div>
+                <p class="font-bold">Selected Users</p>
+            </div>
+        </div>
+        <div class="relative w-full flex-1">
+            <div class="absolute w-full h-full ">
+                <div class="grid  gap-4 grid-cols-2   h-full mt-2 overflow-hidden">
+                    <div class="overflow-y-auto">
+                        <ng-container *ngIf="(sourceAdminUsers$ | async) as datas">
+                            <ng-container *ngIf="datas.length > 0; ">
+                                <div class="grid">
+                                    <div class="z-10 sticky top-0 grid  member-group-select-grid gap-2 py-1 px-2 shadow text-md font-semibold text-secondary bg-gray-50">
+                                        <div>
+                                            Name
+                                        </div>
+                                        <div class="text-center">
+                                            Active
+                                        </div>
+                                        <div></div>
+                                    </div>
+                                    <ng-container *ngFor="let data of datas;">
+                                        <div class="member-group-select-grid grid items-center gap-2 w-full py-1 px-2  border-b">
+                                            <div>{{data.name}}</div>
+                                            <div class="text-center">
+                                                <ng-container *ngIf="data.active">
+                                                    <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                                </ng-container>
+                                                <ng-container *ngIf="!data.active">
+                                                    <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                                </ng-container>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="button" mat-icon-button (click)="addAdminUsers(data.id)"> <mat-icon class="material-symbols-outlined">add_circle</mat-icon></button>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="overflow-y-auto">
+                        <ng-container *ngIf="(selectedAdminUsers$ | async) as datas">
+                            <ng-container *ngIf="datas.length > 0; ">
+                                <div class="grid">
+                                    <div class="z-10 sticky top-0 grid  member-group-select-grid gap-2 py-1 px-2 shadow text-md font-semibold text-secondary bg-gray-50">
+                                        <div>
+                                            Name
+                                        </div>
+                                        <div class="text-center">
+                                            Active
+                                        </div>
+                                        <div></div>
+                                    </div>
+                                    <ng-container *ngFor="let data of datas;">
+                                        <div class="member-group-select-grid grid items-center gap-2 w-full py-1 px-2  border-b">
+                                            <div>{{data.name}}</div>
+                                            <div class="text-center">
+                                                <ng-container *ngIf="data.active">
+                                                    <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                                </ng-container>
+                                                <ng-container *ngIf="!data.active">
+                                                    <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                                </ng-container>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="button" mat-icon-button (click)="removeAdminUser(data.id)"><mat-icon class="material-symbols-outlined">do_not_disturb_on</mat-icon></button>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="m-0 py-2 px-4 mat-primary bg-gray-100">
+        <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid">
+            <mat-icon class="material-symbols-outlined mr-1">save</mat-icon>
+            <span *ngIf="!dataForm.disabled">
+                Save
+            </span>
+            <mat-progress-spinner *ngIf="dataForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+        </button>
+    </div>
+</form>

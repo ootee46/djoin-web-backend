@@ -1,0 +1,53 @@
+<form #myForm="ngForm"   [formGroup]="dataForm" (submit)="$event.stopPropagation();">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-4 m-0 flex-none" >
+        <div class="mb-4">
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Name</mat-label>
+                <input matInput [formControlName]="'title'" maxlength="90" [placeholder]="'Name'">
+            </mat-form-field>
+        </div>
+        <div class="mb-4">
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Step Type</mat-label>
+                <mat-select formControlName="stepType">
+                    <mat-option [value]="'Review'" *ngIf="(steps.length == 0 && action === 'add') || action == 'edit'">Review</mat-option>
+                    <mat-option [value]="'Approve'">Approve</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="mb-4">
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Approver Type</mat-label>
+                <mat-select formControlName="type">
+                    <mat-option [value]="'Requester'">Requester</mat-option>
+                    <mat-option [value]="'User'">User</mat-option>
+                    <mat-option [value]="'Approver Team'">Approver's Team</mat-option>
+                    <mat-option [value]="'Approver Position'">Approver Position</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <select-search *ngIf="dataForm.get('type').value === 'User' " formControlName="userId" [displayText]="'Select User'" [options]="users" [value]="'id'" [text]="'name'" class="w-full mb-4"></select-search>
+        <select-search *ngIf="dataForm.get('type').value === 'Approver Team' "  formControlName="approverGroupId"  [displayText]="'Select Approver\'s Team'" [options]="approverGroups" [value]="'id'" [text]="'title'" class="w-full mb-4"></select-search>
+        <select-search *ngIf="dataForm.get('type').value === 'Approver Position' "  formControlName="approverPositionId"  [displayText]="'Select Approver Position'" [options]="approverPositions" [value]="'id'" [text]="'title'" class="w-full mb-4"></select-search>
+    </div>
+    <div mat-dialog-actions class="m-0 py-4 px-4 mat-primary bg-gray-100">
+        <button (click)="saveData()" type="button" mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid" >
+            <mat-icon class="material-symbols-outlined mr-1">save</mat-icon>
+            <span *ngIf="!dataForm.disabled">
+                Save
+            </span>
+            <mat-progress-spinner
+                *ngIf="dataForm.disabled"
+                [diameter]="24"
+                [mode]="'indeterminate'"></mat-progress-spinner>
+        </button>
+    </div>
+</form>

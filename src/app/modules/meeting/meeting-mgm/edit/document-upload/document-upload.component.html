@@ -1,0 +1,193 @@
+<mat-drawer-container class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-0 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="datas">
+                <ng-container *ngIf="datas.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="z-10 sticky top-0 grid  agenda-document-upload-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div>
+                                Agenda
+                            </div>
+                            <div>
+                                Document Upload Status
+                            </div>
+                        </div>
+                        <div>
+                            <ng-container *ngFor="let data of datas;">
+                                <ng-container *ngIf="data.isBooking">
+                                    <div (click)="openDetail(data.id)" class="agenda-document-upload-grid grid items-center gap-4 w-full py-4 px-6  border-b hover:bg-sky-100 cursor-pointer ">
+                                        <div>
+                                            <div class="font-bold flex flex-row items-center">
+                                                <span>{{data.title}}</span>
+                                            </div>
+                                            <div>[ {{data.bookingName}} | 12 Jan 2022 12:00]</div>
+                                        </div>
+                                        <div>{{data.documentStatus}}
+                                            <!-- <ng-container *ngIf="data.minuteStatus === 'Waiting for Admin Upload' ">
+                                                    <div class="mt-2"><button  type="button" mat-raised-button class="bg-sky-700 text-white">Upload Minutes</button></div>
+                                                </ng-container> -->
+                                        </div>
+                                    </div>
+                                    <ng-container *ngTemplateOutlet="childAgenda;context:{ itemDatas: data.subAgendas, parentData: data }"></ng-container>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+            <ng-template #childAgenda let-itemDatas="itemDatas">
+                <ng-container *ngIf="itemDatas && itemDatas.length > 0">
+                    <div>
+                        <ng-container *ngFor="let data of itemDatas;">
+                            <div class="agenda-document-upload-grid grid items-center gap-4 w-full py-1 px-6  border-b {{bgSteps[data.step]}}">
+                                <div class="ml-{{data.step * 3}} flex flex-row items-center ">
+                                    <mat-icon class="mr-2 mt-1 material-symbols-outlined">arrow_forward</mat-icon>
+                                    <span>{{data.title}}</span>
+                                </div>
+                                <div>-</div>
+                            </div>
+                            <ng-container *ngTemplateOutlet="childAgenda;context:{ itemDatas: data.subAgendas, parentData: data }"></ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </div>
+    </div>
+    <mat-drawer class="w-11/12" [autoFocus]="false" [mode]="'over'" [position]="'end'" [opened]="false" #matDrawer>
+        <div class="px-6 py-2" *ngIf="detailMode === 'agenda'">
+            <div class="my-2 mb-4 border-b flex flex-row items-center justify-between">
+                <div class="font-bold text-xl">
+                    Document Upload
+                </div>
+                <div>
+                    <button type="button" mat-icon-button (click)="closeDetail()"><mat-icon class="material-symbols-outlined">close</mat-icon></button>
+                </div>
+            </div>
+
+            <div class="py-2 my-2 mb-6 border rounded-2xl p-4 bg-gray-100 flex flex-row items-center justify-between">
+                <div>
+                    <div class="mb-2 "><b>Agenda : </b>วาระนำเสนอจาก Agenda Owner 2</div>
+                    <div class="flex flex-row gap-6">
+                        <div><b>Agenda Owner :</b> Wichian Yungmeesuk</div>
+                        <div><b>Reserve Date:</b> 12 Jan 2022 12:30</div>
+                        <div><b>Status:</b> Approved</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4 flex flex-row gap-4">
+                <div><button type="button" mat-raised-button class="bg-green-700 w-20 text-white">Approve </button></div>
+                <div><button type="button" mat-raised-button class="bg-red-700 w-20 text-white">Reject </button></div>
+                <div><button type="button" mat-raised-button class="bg-sky-700 w-20 text-white">Publish </button></div>
+            </div>
+            <div class="border-b pb-2 mb-4 font-semibold">Upload Fileed</div>
+            <div class="mb-6">
+                <table class="table w-full"  #filePanelOrigin>
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th>
+                                File Name
+                            </th>
+                            <th class="w-40">
+                                File Type
+                            </th>
+                            <th class="w-40">
+                                Permission
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr>
+                            <td><a class="underline" href="#">File1.pdf</a></td>
+                            <td>Presentation</td>
+                            <td class="text-center"><button type="button" (click)="openPermission($event.target)" mat-flat-button class="bg-gray-100">View</button></td>
+                        </tr>
+                        <tr>
+                            <td><a class="underline" href="#">File2.pdf</a></td>
+                            <td>Meeting Document</td>
+                            <td class="text-center"><button type="button" (click)="openPermission($event.target)" mat-flat-button class="bg-gray-100">View</button></td>
+                        </tr>
+                        <tr>
+                            <td><a class="underline" href="#">File3.pdf</a></td>
+                            <td>Other</td>
+                            <td class="text-center"><button type="button" (click)="openPermission($event.target)" mat-flat-button class="bg-gray-100">View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <ng-template #permissionPanel>
+                    <div class=" flex flex-col w-full overflow-hidden rounded border shadow-md bg-card">
+                        <div class="p-4">
+                            <table class="table w-full" >
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th>Name</th>
+                                        <th class="w-14">Read</th>
+                                        <th class="w-14">Export</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>FirstName1 LastName1</td>
+                                        <td class="text-center">Yes</td>
+                                        <td class="text-center">Yes</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FirstName2 LastName2</td>
+                                        <td class="text-center">Yes</td>
+                                        <td class="text-center">Yes</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FirstName3 LastName3</td>
+                                        <td class="text-center">Yes</td>
+                                        <td class="text-center">Yes</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+
+            <div class="border-b pb-2 mb-4 font-semibold">Document Upload History</div>
+            <div>
+                <table class="table w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th>Item</th>
+                            <th class="w-50">By</th>
+                            <th class="w-40">Action</th>
+                            <th class="w-40">Date</th>
+                            <th class="w-40">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Agenda Ownere  Upload Document</td>
+                            <td>Wichian Yungmeesuk</td>
+                            <td>File Submited</td>
+                            <td>20 Jan 2022 12:30</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Admin Approve</td>
+                            <td>FirstName1 LastName1</td>
+                            <td>Approved</td>
+                            <td>20 Jan 2022 12:30</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Approve  Approve</td>
+                            <td>FirstName2 LastName2</td>
+                            <td>Approved</td>
+                            <td>20 Jan 2022 12:30</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-drawer>
+
+</mat-drawer-container>

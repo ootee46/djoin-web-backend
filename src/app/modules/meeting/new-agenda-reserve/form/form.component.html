@@ -1,0 +1,218 @@
+<form class="flex flex-col w-full h-full min-h-[600px]" #myForm="ngForm" [formGroup]="dataForm">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <ng-container *ngIf="formStep === 1">
+        <div mat-dialog-content class="p-4 m-0 flex flex-1  flex-col w-full h-full">
+            <div class="text-lg font-semibold border-b my-2 py-2">Meeting Selection</div>
+            <div class="flex flex-row gap-6 items-center justify-center mt-6">
+                <div class="flex-1">
+                    <div class="font-semibold  leading-none mb-2 ">Available Meeting</div>
+                    <div class="mb-2">
+                        <mat-form-field class="w-full fuse-mat-no-subscript ">
+                            <input matInput [(ngModel)]="kw" [ngModelOptions]="{standalone:true}" (keyup)="filterData()">
+                            <mat-icon class="material-symbols-outlined" matSuffix>search</mat-icon>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="w-5">&nbsp;</div>
+                <div class="flex-1">
+                    <div class="font-semibold  leading-none mb-2 ">Selected Meeting</div>
+                    <div class="mb-2">
+                        <mat-form-field class="w-full fuse-mat-no-subscript ">
+                            <input matInput [(ngModel)]="kw2" [ngModelOptions]="{standalone:true}" (keyup)="filterSelect()">
+                            <mat-icon class="material-symbols-outlined" matSuffix>search</mat-icon>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div cdkDropListGroup class="flex flex-1  flex-row gap-6 items-center justify-center mt-1">
+                <div class="flex-1  h-full">
+                    <div cdkDropList cdkDropListSortingDisabled #avaliableMeeting="cdkDropList" [cdkDropListConnectedTo]="[selectedMeeting]" (cdkDropListDropped)="drop($event)" [cdkDropListData]="meetings" class="border h-full overflow-auto">
+                        <div (dblclick)="addItem(item)" class="border-b py-2 px-2 cursor-move bg-white hover:bg-gray-100 " *ngFor="let item of (filterMeetings$ | async)" cdkDrag>
+                            <div class="flex flex-row w-full">
+                                <div class="flex-1">
+                                    <div class="font-semibold">{{item.title}}</div>
+                                    <div class="text-sm">
+                                        {{item.meetingTypeName}} | {{item.startDate | date : 'dd MMM yyy'}} | {{item.startDate | date : 'HH:mm'}} - {{item.endDate | date : 'HH:mm'}}
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="button" mat-icon-button (click)="addItem(item)"> <mat-icon class="material-symbols-outlined">add_circle</mat-icon></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-5">
+                    <mat-icon class="material-symbols-outlined">arrow_forward</mat-icon>
+                </div>
+                <div class="flex-1 h-full">
+                    <div cdkDropList cdkDropListSortingDisabled #selectedMeeting="cdkDropList" [cdkDropListConnectedTo]="[avaliableMeeting]" (cdkDropListDropped)="drop($event)" [cdkDropListData]="selectedMeetings" class="border h-full overflow-auto">
+                        <div (dblclick)="removeItem(item)" class="border-b py-2 px-2 cursor-move bg-white hover:bg-gray-100 " *ngFor="let item of (filterSelectMeetings$ | async)" cdkDrag>
+                            <div class="flex flex-row w-full">
+                                <div class="flex-1">
+                                    <div class="font-semibold">{{item.title}}</div>
+                                    <div class="text-sm">
+                                        {{item.meetingTypeName}} | {{item.startDate | date : 'dd MMM yyy'}} | {{item.startDate | date : 'HH:mm'}} - {{item.endDate | date : 'HH:mm'}}
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button type="button" mat-icon-button (click)="removeItem(item)"><mat-icon class="material-symbols-outlined">do_not_disturb_on</mat-icon></button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="py-4 px-4 bg-gray-100">
+            <button mat-raised-button color="primary" type="button" (click)="goStep(2)" class="save-button mat-accent">
+                <span *ngIf="!dataForm.disabled">
+                    Next
+                </span>
+            </button>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="formStep === 2">
+        <div mat-dialog-content class="p-4 m-0 flex flex-1  flex-col w-full">
+            <div class="mb-4 rounded-2xl bg-gray-100 p-6 border">
+                <ng-container formArrayName="requests">
+                    <ng-container *ngFor="let item of requests.controls; let i = index">
+                        <div class="p-4 bg-white  mb-4 border rounded-2xl" [formGroupName]="i">
+                            <div class="border-b">
+                                <div class="font-semibold">{{agendaRequestForms[i].meetingTitle}}</div>
+                                <div class="text-sm">
+                                    {{agendaRequestForms[i].meetingTypeName}} | {{agendaRequestForms[i].startDate | date : 'dd MMM yyy'}} | {{agendaRequestForms[i].startDate | date : 'HH:mm'}} - {{agendaRequestForms[i].endDate | date : 'HH:mm'}}
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-4 my-4">
+                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                    <mat-label>Agenda Name</mat-label>
+                                    <input matInput formControlName="title" required="true" maxlength="900">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript w-50 ">
+                                    <mat-label>Estimate Time (Min)</mat-label>
+                                    <input matInput type="number" [min]="0" formControlName="useTime">
+                                </mat-form-field>
+                            </div>
+                            <div class="flex flex-row gap-4 my-4">
+                                <search-option formControlName="agendaObjectiveId" [placeholder]="null" [displayText]="'Objective'" [options$]="objectives$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+                                <search-option formControlName="agendaConfidentialId" [placeholder]="null" [displayText]="'Confidential Level'" [options$]="confidentials$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+                            </div>
+                            <div class="mb-4">
+                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                    <mat-label>Description</mat-label>
+                                    <textarea matInput formControlName="description" required="true"></textarea>
+                                </mat-form-field>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-4 mb-4 ">
+                                <div class="flex-1">
+                                    <div class="p-2 bg-gray-100 font-semibold border"> Presenters</div>
+                                    <div class="h-60 flex flex-col p-4 border-x border-b overflow-hidden ">
+                                        <div class="flex flex-row gap-2 justify-center ">
+                                            <search-option [ngModelOptions]="{standalone: true}" [(ngModel)]="agendaRequestForms[i].presenterId" class="flex-1" [displayText]="null" [options$]="agendaRequestForms[i].presenters$" [value]="'id'" [text]="'name'" [placeholder]="'Select Presenter'" [allText]="'All Group'" [showAll]="false"></search-option>
+                                            <button type="button" (click)="addPresenter(i)" mat-raised-button class="bg-sky-700 text-white mt-1">Add</button>
+                                        </div>
+                                        <div class="overflow-auto">
+                                            <ng-container *ngIf="agendaRequestForms[i].selectedPresenters">
+                                                <ng-container *ngIf="agendaRequestForms[i].selectedPresenters.length > 0; else noDatas">
+                                                    <div class="grid">
+                                                        <div class="z-10 sticky top-0 grid  style1-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                                            <div>
+                                                                Action
+                                                            </div>
+                                                            <div>
+                                                                Name
+                                                            </div>
+                                                        </div>
+                                                        <ng-container *ngFor="let data of agendaRequestForms[i].selectedPresenters; ">
+                                                            <div class="style1-grid grid items-center gap-4 w-full py-2 px-6  border-b">
+                                                                <div>
+                                                                    <button type="button" (click)="removePresenter(i,data)">
+                                                                        <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="truncate">
+                                                                    {{data.name}}
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #noDatas>
+                                                <div class="p-8  border-t font-semibold tracking-tight text-center">Record not found!</div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="p-2 bg-gray-100 font-semibold border"> Exclude Attendee</div>
+                                    <div class="h-60 p-4 border-x border-b flex flex-col">
+                                        <div class="flex flex-row gap-2 justify-center ">
+                                            <search-option [ngModelOptions]="{standalone: true}" [(ngModel)]="agendaRequestForms[i].excludeUserId" class="flex-1" [displayText]="null" [options$]="agendaRequestForms[i].excludeUsers$" [value]="'id'" [text]="'name'" [placeholder]="'Select Exclude User'" [allText]="'All Group'" [showAll]="false"></search-option>
+                                            <button type="button" (click)="addExcludeUser(i)" mat-raised-button class="bg-sky-700 text-white mt-1">Add</button>
+                                        </div>
+                                        <div class="overflow-auto">
+                                            <ng-container *ngIf="agendaRequestForms[i].selectedExcludeUsers">
+                                                <ng-container *ngIf="agendaRequestForms[i].selectedExcludeUsers.length > 0; else noDatas">
+                                                    <div class="grid">
+                                                        <div class="z-10 sticky top-0 grid  style1-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                                            <div>
+                                                                Action
+                                                            </div>
+                                                            <div>
+                                                                Name
+                                                            </div>
+                                                        </div>
+                                                        <ng-container *ngFor="let data of agendaRequestForms[i].selectedExcludeUsers; ">
+                                                            <div class="style1-grid grid items-center gap-4 w-full py-2 px-6  border-b">
+                                                                <div>
+                                                                    <button type="button" (click)="removeExcludeUser(i,data)">
+                                                                        <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="truncate">
+                                                                    {{data.name}}
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #noDatas>
+                                                <div class="p-8  border-t font-semibold tracking-tight text-center">Record not found!</div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+        <div class="py-4 px-4 bg-gray-100 flex flex-row gap-4">
+            <button type="button" (click)="saveData()" mat-raised-button color="primary" class=" mat-accent w-32" [disabled]="dataForm.invalid">
+                <span *ngIf="!dataForm.disabled">
+                    Save
+                </span>
+                <mat-progress-spinner *ngIf="dataForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+            </button>
+            <button type="button" (click)="goStep(1)" mat-raised-button class=" bg-gray-200 w-32">
+                <span *ngIf="!dataForm.disabled">
+                    Back
+                </span>
+                <mat-progress-spinner *ngIf="dataForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+            </button>
+        </div>
+    </ng-container>
+</form>

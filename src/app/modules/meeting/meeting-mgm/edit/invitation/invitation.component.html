@@ -1,0 +1,51 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <!-- Header -->
+    <div class="relative flex flex-col gap-4 sm:flex-row flex-0 sm:items-center sm:justify-end pt-4 px-6 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div><button type="button" mat-raised-button color="primary" class="mb-4" (click)="create()"> New Invitation </button></div>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-0 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(listData$ | async) as listData">
+                <ng-container *ngIf="listData.datas.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="grid  grid-cols-[minmax(120px,_1fr),420px,100px] z-10 sticky top-0  gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5" >
+                            <div>
+                                Item
+                            </div>
+                            <div>
+                                Send To
+                            </div>
+                            <div>
+                                Result
+                            </div>
+                        </div>
+                        <ng-container *ngFor="let data of listData.datas;">
+                            <div class="grid grid-cols-[minmax(120px,_1fr),420px,100px]  items-center gap-4 w-full py-2 px-6  border-b">
+                                <div class="truncate">
+                                    Invitaion {{data.method}} at {{data.createdDate | date : 'dd/MM/yyyy HH:mm'}}
+                                </div>
+                                <div class="truncate">
+                                    <ng-container *ngFor="let item of data.users">
+                                     <span class="truncate">• {{item.firstName}} {{item.lastName}} ({{item.email}})</span><br>
+                                    </ng-container>
+                                 </div>
+                                 <div>
+                                    <span class="text-green-700"    *ngIf="data.result === true">Success</span>
+                                    <span class="text-red-700"   [matTooltip]="data.errorMessage" *ngIf="data.result === false">Fail</span>
+                                    <span *ngIf="data.result === null">N/A</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </div>
+</div>

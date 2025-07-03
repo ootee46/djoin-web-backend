@@ -1,0 +1,9 @@
+<mat-form-field class="w-full">
+    <mat-label>{{displayText}}</mat-label>
+    <input type="text" matInput [required]="_required" [matAutocomplete]="auto" [formControl]="searchControl">
+</mat-form-field>
+<mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let option of optionFilter  | async" [value]="option">
+      {{option}}
+    </mat-option>
+</mat-autocomplete>

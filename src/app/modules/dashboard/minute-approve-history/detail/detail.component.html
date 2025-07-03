@@ -1,0 +1,60 @@
+<div class="flex flex-col min-w-0  bg-card" *ngIf="(data$ | async) as data">
+    <div class="flex-1">
+        <div class="m-4">
+            <div class="p-4 rounded-2xl bg-gray-50 border  mb-6">
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Request No.:</div>
+                    <div class="flex-1">{{data.minuteRequest.documentNo}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Meeting Name:</div>
+                    <div class="flex-1">{{data.minuteRequest.meetingTitle}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Meeting Date:</div>
+                    <div class="flex-1">{{data.minuteRequest.startDate | date : "dd-MM-yyyy"}}  {{data.minuteRequest.startDate | date : "HH:mm"}}
+                        <span *ngIf="data.minuteRequest.endDate"> - {{data.minuteRequest.endDate | date : "HH:mm"}} </span></div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Agenda Name:</div>
+                    <div class="flex-1">{{data.minuteRequest.title}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Submitted Date:</div>
+                    <div class="flex-1">{{data.minuteRequest.createdDate | date : 'dd/MM/yyyy HH:mm'}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Minutes:</div>
+                    <div class="flex-1"><a *ngIf="data.minuteRequest.fileUrl" class="cursor-pointer" [openFile]="data.minuteRequest.fileUrl"><u>{{data.minuteRequest.fileName}}</u></a></div>
+                </div>
+            </div>
+            <ng-container *ngIf="data.histories">
+                <div class="mt-8 border-b mb-2 font-medium">History</div>
+                <div class="mb-8" *ngIf="data.histories">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <td class="text-center">Description</td>
+                                <td class="text-center w-40">Minutes</td>
+                                <td class="text-center w-36">Date</td>
+                                <td class="text-center w-60">Action By</td>
+                                <td class="text-center w-36">Status</td>
+                                <td class="text-center">Remark</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of data.histories">
+                                <td>{{item.stepName}}</td>
+                                <td><a *ngIf="item.fileUrl" class="cursor-pointer" [openFile]="item.fileUrl"><u>{{item.fileName}}</u></a></td>
+                                <td><span *ngIf="item.actionDate">{{item.actionDate | date : "dd/MM/yyyy HH:mm"}}</span></td>
+                                <td>{{item.approverName}}</td>
+                                <td>{{item.action}}</td>
+                                <td>{{item.remark}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

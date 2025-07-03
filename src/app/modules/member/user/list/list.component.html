@@ -1,0 +1,138 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-3xl font-extrabold tracking-tight px-6">Accounts</div>
+        <!-- Actions -->
+        <div class="flex flex-shrink-0 items-center mt-6 sm:mt-0 ml-4 flex-1">
+            <!-- Search -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-72 mr-4 w-full">
+                <mat-icon class="icon-size-5 material-symbols-outlined" matPrefix>search</mat-icon>
+                <input matInput [(ngModel)]="searchQuery.kw" [autocomplete]="'off'"  (keyup.enter)="doSearch()">
+                <div matSuffix class="text-center text-md "><a  class="cursor-pointer" (click)="toggleAdvanceSearch()"><u>Advanced</u></a></div>
+                <button type="button" mat-icon-button *ngIf="searchQuery.kw" (click)="clearSearch()" matSuffix>
+                    <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+                </button>
+            </mat-form-field>
+            <!-- Add product button -->
+
+        </div>
+        <button type="button" class="ml-4 mr-6 mt-6 sm:mt-0" mat-flat-button [color]="'primary'" (click)="create()">
+            <mat-icon class="icon-size-5 material-symbols-outlined">add_circle</mat-icon>
+            <span class="ml-2 mr-1">New</span>
+        </button>
+    </div>
+    <div *ngIf="isAdvance" class="relative flex flex-col sm:flex-row flex-0  gap-4 sm:items-center sm:justify-between pt-4 px-6 border rounded mb-4 bg-gray-50">
+        <!-- <mat-form-field class="fuse-mat-rounded  flex-1">
+            <mat-select placeholder="Member Group" class="w-full" (selectionChange)="doSearch()" [(ngModel)]="searchQuery.catId">
+                <mat-option [value]="null">All</mat-option>
+                <mat-option [value]="item.id" *ngFor="let item of (userGroups$ | async)">{{item.name}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+
+        <search-option [(ngModel)]="searchQuery.catId" (selectionChange)="doSearch()" [placeholder]="'Member Group'"  [displayText]="' '" [allText]="'All'" [showAll]="true" [options$]="userGroups$"  [value]="'id'" [text]="'name'" class="flex-1 -mt-1" [class]="'fuse-mat-rounded'"></search-option>
+
+        <mat-form-field class="fuse-mat-rounded  flex-1"  *ngIf="userInfo.userLevel === 1">
+            <mat-select placeholder="User Level" class="w-full" (selectionChange)="doSearch()" [(ngModel)]="searchQuery.statusId">
+                <mat-option [value]="null">All</mat-option>
+                <mat-option [value]="3">Normal User</mat-option>
+                <mat-option [value]="2">Admin</mat-option>
+                <mat-option [value]="1">Super Admin</mat-option>
+                <mat-option [value]="4">Agenda Owner</mat-option>
+                <mat-option [value]="5">Agenda Owner Team</mat-option>
+                <mat-option [value]="6">Approver</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-18 sm:overflow-hidden overflow-auto sm:overflow-y-auto">
+            <ng-container *ngIf="(listData$ | async) as listData">
+                <ng-container *ngIf="listData.datas.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="grid grid-cols-[80px,minmax(120px,_1fr),120px,250px,150px,50px,125px,180px] z-10 sticky top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div>
+                                Action
+                            </div>
+                            <div>
+                                Name
+                            </div>
+                            <div>
+                                Domain
+                            </div>
+                            <div>
+                                Email
+                            </div>
+                            <div>
+                                User Level
+                            </div>
+                            <div>
+                                Active
+                            </div>
+                            <div>
+                                Last Updated
+                            </div>
+                            <div>
+                                Updated By
+                            </div>
+
+                        </div>
+                        <ng-container *ngFor="let data of listData.datas; trackBy: trackByFn">
+                            <div class="grid grid-cols-[80px,minmax(120px,_1fr),120px,250px,150px,50px,125px,180px] items-center gap-4 w-full py-4 px-6  border-b">
+                                <div class="flex flex-row gap-2">
+                                    <button type="button" (click)="edit(data)" [matTooltip]="'Edit'">
+                                        <mat-icon title="Edit" class="material-symbols-outlined">edit_square</mat-icon>
+                                    </button>
+                                    <button type="button" (click)="deleteData(data)" [matTooltip]="'Delete'">
+                                        <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="truncate">
+                                    {{data.name}}
+                                </div>
+                                <div>
+                                    {{getDomain(data.userName)}}
+                                </div>
+                                <div class="truncate">
+                                    {{data.email}}
+                                </div>
+                                <div>
+                                    <span *ngIf="data.userLevel === 1">Super Admin</span>
+                                    <span *ngIf="data.userLevel === 2">Admin</span>
+                                    <span *ngIf="data.userLevel === 3">Normal User</span>
+                                    <span *ngIf="data.userLevel === 4">Agenda Owner</span>
+                                    <span *ngIf="data.userLevel === 5">Agenda Owner Team</span>
+                                    <span *ngIf="data.userLevel === 6">Approver</span>
+                                </div>
+                                <div>
+                                    <ng-container *ngIf="data.active">
+                                        <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="!data.active">
+                                        <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                    </ng-container>
+                                </div>
+                                <div>
+                                    {{data.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                </div>
+                                <div>
+                                    {{data.updatedUser}}
+                                </div>
+
+                            </div>
+                        </ng-container>
+                        <mat-paginator #paginator class=" sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="listData.totalRecord" [pageIndex]="listData.page" [pageSize]="listData.pageSize" [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true">
+                        </mat-paginator>
+                    </div>
+                </ng-container>
+
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </div>
+</div>
