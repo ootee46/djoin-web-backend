@@ -5,6 +5,7 @@ import { User } from 'app/core/user/user.types';
 import { PackageInfoModel } from 'app/models/package-info.model';
 import { Observable } from 'rxjs';
 import { DashboardService } from './dashboard.service';
+import { GlobalService } from 'app/services/global.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,10 +18,11 @@ export class DashboardComponent implements OnInit {
   selectedPanel: string = 'overview';
   user$: Observable<User>;
   package$: Observable<PackageInfoModel>;
+  isPrePost: boolean = false;
   constructor(
     private _route: ActivatedRoute,
-    private _router: Router,
     private _userService: UserService,
+    private _globalService: GlobalService,
     private _service: DashboardService,
   ) { }
 
@@ -31,6 +33,7 @@ export class DashboardComponent implements OnInit {
     }
     this.package$ = this._service.packageInfo$;
     this.user$ = this._userService.get();
+    this.isPrePost = this._globalService.packageInfo.featureList?.includes('f7');
   }
 
 }

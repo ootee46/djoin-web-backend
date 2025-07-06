@@ -4,6 +4,7 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { UserService } from 'app/core/user/user.service';
 import { forkJoin, Observable } from 'rxjs';
 import { AuthService } from './core/auth/auth.service';
+import { DashboardService } from './modules/dashboard/dashboard.service';
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +17,8 @@ export class InitialDataResolver implements Resolve<any>
     constructor(
         private _navigationService: NavigationService,
         private _authService: AuthService,
-        private _userService: UserService
+        private _userService: UserService,
+        private _dashboardService: DashboardService,
     )
     {
     }
@@ -37,6 +39,7 @@ export class InitialDataResolver implements Resolve<any>
         return forkJoin([
             this._navigationService.get(),
             this._authService.getAntiforgery(),
+            this._dashboardService.getPackageInfo(),
             this._userService.get()
         ]);
     }

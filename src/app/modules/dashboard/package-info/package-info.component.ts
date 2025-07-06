@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
@@ -19,6 +19,7 @@ import { AgendaReserveFormComponent } from 'app/modules/meeting/agenda-reserve/f
     animations: fuseAnimations,
 })
 export class DashboardPackageInfoComponent implements OnInit, OnDestroy {
+    @Input() isPrePost: boolean = false;
     data$: Observable<PackageInfoModel>;
     user$: Observable<User>;
     user: User;

@@ -10,6 +10,7 @@ export class PackageInfoModel{
   totalWaitingAgenda: number;
   totalWaitingMinute: number;
   totalAgendaRequest: number;
+  featureList: string[];
   constructor(data){
     Object.assign(this,data);
     if(data.diskLimit === 0){

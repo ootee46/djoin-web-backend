@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { encryptStorage } from 'app/constants/constant';
+import { PackageInfoModel } from 'app/models/package-info.model';
 import Swal from 'sweetalert2';
 
 @Injectable({
@@ -9,7 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class GlobalService
 {
-
+    packageInfo: PackageInfoModel = new PackageInfoModel({});
     constructor(private _httpClient: HttpClient, private _router: Router)
     {
     }

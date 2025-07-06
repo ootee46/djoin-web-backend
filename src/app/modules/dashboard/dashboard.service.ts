@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
 import { DataListModel } from 'app/models/data-list.model';
@@ -16,6 +16,7 @@ import {
 import { PackageInfoModel } from 'app/models/package-info.model';
 import { MeetingListModel, MeetingModel } from 'app/models/meeting.model';
 import { LineApproveModel } from 'app/models/line-approve.model';
+import { GlobalService } from 'app/services/global.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -42,7 +43,7 @@ export class DashboardService {
         new BehaviorSubject(null);
     private _historyMeetings: BehaviorSubject<DataListModel<MeetingListModel> | null> =
         new BehaviorSubject(null);
-    constructor(private _httpClient: HttpClient) {}
+    constructor(private _httpClient: HttpClient, private _globalService: GlobalService) {}
 
     get agendaApproverDetail$(): Observable<AgendaRequestItemModel> {
         return this._agendaApproverDetail.asObservable();
@@ -227,6 +228,9 @@ export class DashboardService {
                     } else {
                         this._packageInfo.next(null);
                     }
+
+                    this._globalService.packageInfo = this._packageInfo.getValue();
+                    
                 })
             );
     }

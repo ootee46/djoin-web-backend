@@ -2,7 +2,7 @@
     <ng-container *ngIf="user && (user.userLevel === 1 || user.userLevel === 2 || user.userLevel === 4 || user.userLevel === 5 )"
         >
         <div class="flex flex-row gap-4 mt-4">
-                <div class="flex-1">
+                <div class="flex-1" *ngIf="isPrePost">
                     <div
                         class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
                     >
@@ -34,17 +34,18 @@
                     </ng-container>
                 </div>
                 <button
-                type="button"
-                class="ml-4 mr-6"
-                mat-flat-button
-                [color]="'primary'"
-                (click)="create()"
-            >
-                <mat-icon class="icon-size-5 material-symbols-outlined"
-                    >add_circle</mat-icon
+                    *ngIf="isPrePost"
+                    type="button"
+                    class="ml-4 mr-6"
+                    mat-flat-button
+                    [color]="'primary'"
+                    (click)="create()"
                 >
-                <span class="ml-2 mr-1">Book New Agenda</span>
-            </button>
+                    <mat-icon class="icon-size-5 material-symbols-outlined"
+                        >add_circle</mat-icon
+                    >
+                    <span class="ml-2 mr-1">Book New Agenda</span>
+                </button>
         </div>
         <ng-container *ngIf="user && (user.userLevel === 1 || user.userLevel === 2 )" >
             <div class="flex flex-row gap-4 mt-4">
