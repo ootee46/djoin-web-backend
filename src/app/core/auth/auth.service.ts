@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import {
+    catchError,
+    Observable,
+    of,
+    switchMap,
+    take,
+    tap,
+    throwError,
+} from 'rxjs';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
 import { ENDPOINT } from 'app/constants/endpoint';
@@ -17,53 +25,63 @@ export class AuthService {
     constructor(
         private _httpClient: HttpClient,
         private _userService: UserService
-    ) {
-    }
+    ) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-
     get accessToken(): string {
         const tmpToken = encryptStorage.getItem('accessToken');
-        if (tmpToken === null || tmpToken === 'null' || tmpToken === undefined || tmpToken === 'undefined') {
+        if (
+            tmpToken === null ||
+            tmpToken === 'null' ||
+            tmpToken === undefined ||
+            tmpToken === 'undefined'
+        ) {
             encryptStorage.removeItem('accessToken');
             return null;
-        }
-        else {
+        } else {
             return tmpToken;
         }
     }
 
     set accessToken(token: string) {
-        if (token === null || token === 'null' || token === undefined || token === 'undefined') {
+        if (
+            token === null ||
+            token === 'null' ||
+            token === undefined ||
+            token === 'undefined'
+        ) {
             encryptStorage.removeItem('accessToken');
-        }
-        else {
+        } else {
             encryptStorage.setItem('accessToken', token);
         }
     }
 
     getAntiforgery(): Observable<any> {
-        return this._httpClient.get<any>(ENDPOINT.service.getAntiforgery).pipe(tap((response) => {
-            if (typeof (response) == 'object' && response.token) {
-                this.antiforgery = response.token;
-            }
-        }));
+        return this._httpClient.get<any>(ENDPOINT.service.getAntiforgery).pipe(
+            tap((response) => {
+                if (typeof response == 'object' && response.token) {
+                    this.antiforgery = response.token;
+                }
+            })
+        );
     }
 
     forgotPassword(email: string): Observable<any> {
         return this._httpClient.post('api/auth/forgot-password', email);
     }
 
-
     resetPassword(password: string): Observable<any> {
         return this._httpClient.post('api/auth/reset-password', password);
     }
 
-
-    signIn(credentials: { userName: string; password: string; siteId: number }): Observable<any> {
+    signIn(credentials: {
+        userName: string;
+        password: string;
+        siteId: number;
+    }): Observable<any> {
         // Throw error, if the user is already logged in
         if (this._authenticated) {
             return throwError('User is already logged in.');
@@ -71,7 +89,6 @@ export class AuthService {
 
         return this._httpClient.post(ENDPOINT.auth.login, credentials).pipe(
             switchMap((response: any) => {
-
                 // Store the access token in the local storage
                 this.accessToken = response.token;
 
@@ -87,53 +104,60 @@ export class AuthService {
         );
     }
 
-
     signInUsingToken(): Observable<any> {
         // Renew token
         return this.getAntiforgery().pipe(
-            catchError(() =>
-                of(false)
-            ),
-            switchMap(() => this._httpClient.post(ENDPOINT.auth.refreshToken, null).pipe(
-                catchError(() =>
-                    of(false)
-                ),
-                switchMap((response: any) => {
-                    // Store the access token in the local storage
-                    this.accessToken = response.token;
+            catchError(() => of(false)),
+            switchMap(() =>
+                this._httpClient.post(ENDPOINT.auth.refreshToken, null).pipe(
+                    catchError(() => of(false)),
+                    switchMap((response: any) => {
+                        // Store the access token in the local storage
+                        this.accessToken = response.token;
 
-                    // Set the authenticated flag to true
-                    this._authenticated = true;
+                        // Set the authenticated flag to true
+                        this._authenticated = true;
 
-                    // Store the user on the user service
-                    this._userService.user = response.user;
+                        // Store the user on the user service
+                        this._userService.user = response.user;
 
-                    // Return true
-                    return of(true);
-                })
-            ))
+                        // Return true
+                        return of(true);
+                    })
+                )
+            )
         );
     }
 
-
     signOut(): Observable<any> {
         // Remove the access token from the local storage
-        encryptStorage.removeItem('accessToken');
-
-        // Set the authenticated flag to false
-        this._authenticated = false;
 
         // Return the observable
+        this._httpClient
+            .post(ENDPOINT.auth.logout, {})
+            .pipe(take(1))
+            .subscribe(() => {
+                encryptStorage.removeItem('accessToken');
+
+                // Set the authenticated flag to false
+                this._authenticated = false;
+            });
         return of(true);
     }
 
-
-    signUp(user: { name: string; email: string; password: string; company: string }): Observable<any> {
+    signUp(user: {
+        name: string;
+        email: string;
+        password: string;
+        company: string;
+    }): Observable<any> {
         return this._httpClient.post('api/auth/sign-up', user);
     }
 
-
-    unlockSession(credentials: { email: string; password: string }): Observable<any> {
+    unlockSession(credentials: {
+        email: string;
+        password: string;
+    }): Observable<any> {
         return this._httpClient.post('api/auth/unlock-session', credentials);
     }
 
@@ -144,7 +168,11 @@ export class AuthService {
         }
 
         // Check the access token availability
-        if (!this.accessToken || this.accessToken === undefined || this.accessToken === 'undefined') {
+        if (
+            !this.accessToken ||
+            this.accessToken === undefined ||
+            this.accessToken === 'undefined'
+        ) {
             return of(false);
         }
 

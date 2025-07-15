@@ -50,6 +50,7 @@ export class AuthSignOutComponent implements OnInit, OnDestroy
         timer(1000, 1000)
             .pipe(
                 finalize(() => {
+                    
                     window.location.href = this.signoutUrl;
                 }),
                 takeWhile(() => this.countdown > 0),

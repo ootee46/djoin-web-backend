@@ -6,6 +6,7 @@ export const ENDPOINT = {
     },
     auth: {
         login: environment.apiUrl + '/auth/login',
+        logout: environment.apiUrl + '/auth/logout',
         refreshToken: environment.apiUrl + '/auth/refresh-token',
     },
     common: {
