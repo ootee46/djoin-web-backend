@@ -1,0 +1,94 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-3xl font-extrabold tracking-tight px-6">Meeting Room</div>
+        <!-- Actions -->
+        <div class="flex flex-1 items-center mt-6 sm:mt-0 ml-4">
+            <!-- Search -->
+            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-40 mr-4 w-full">
+                <mat-icon class="icon-size-5 material-symbols-outlined" matPrefix >search</mat-icon>
+                <mat-button *ngIf="searchQuery.kw" (click)="clearSearch()" matSuffix>
+                    <mat-icon class="icon-size-5 mt-1 cursor-pointer material-symbols-outlined">close</mat-icon>
+                </mat-button>
+                <input matInput [(ngModel)]="searchQuery.kw" [autocomplete]="'off'"  (keyup.enter)="doSearch()">
+            </mat-form-field>
+        </div>
+        <!-- Add product button -->
+        <button type="button" class="ml-4 mr-6 mt-6 sm:mt-0" mat-flat-button [color]="'primary'" (click)="create()">
+            <mat-icon class="icon-size-5 material-symbols-outlined">add_circle</mat-icon>
+            <span class="ml-2 mr-1">New</span>
+        </button>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-18 sm:overflow-hidden overflow-auto sm:overflow-y-auto">
+            <ng-container *ngIf="(listData$ | async) as listData">
+                <ng-container *ngIf="listData.datas.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="grid grid-cols-[70px,minmax(120px,_1fr),80px,50px,125px,180px] z-10 sticky top-0  meeting-group-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50" >
+                            <div>
+                                Action
+                            </div>
+                            <div>
+                                Name
+                            </div>
+                            <div class="text-center">
+                                Total User
+                            </div>
+                            <div class="text-center">
+                                Active
+                            </div>
+                            <div>
+                                Last Updated
+                            </div>
+                            <div>
+                                Updated By
+                            </div>
+                        </div>
+                        <ng-container *ngFor="let data of listData.datas; trackBy: trackByFn">
+                            <div class="grid grid-cols-[70px,minmax(120px,_1fr),80px,50px,125px,180px] items-center gap-4 w-full py-4 px-6  border-b">
+                                <div class="flex flex-row gap-2">
+                                    <button type="button" (click)="edit(data)" [matTooltip]="'Edit'" tile="Edit">
+                                        <mat-icon title="Edit" class="material-symbols-outlined">edit_square</mat-icon>
+                                    </button>
+                                    <button type="button" (click)="deleteData(data)" [matTooltip]="'Delete'">
+                                        <mat-icon tile="Delete" class="material-symbols-outlined mt-1">delete</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="truncate">
+                                    {{data.name}}
+                                </div>
+                                <div class="text-center">
+                                    {{data.users.length}}
+                                </div>
+                                <div class="text-center">
+                                    <ng-container *ngIf="data.active">
+                                        <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="!data.active">
+                                        <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                    </ng-container>
+                                </div>
+                                <div>
+                                    {{data.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                </div>
+                                <div>
+                                    {{data.updatedUser}}
+                                </div>
+                            </div>
+                        </ng-container>
+                        <mat-paginator #paginator  class=" sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="listData.totalRecord" [pageIndex]="listData.page" [pageSize]="listData.pageSize" [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true">
+                        </mat-paginator>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,194 @@
+<div
+    class="flex flex-col w-full min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden"
+    *ngIf="this.data"
+>
+    <mat-drawer-container class="flex-auto sm:h-full">
+        <mat-drawer
+            class="sm:w-62 dark:bg-gray-900"
+            [autoFocus]="false"
+            [mode]="drawerMode"
+            [opened]="drawerOpened"
+            #drawer
+        >
+            <!-- Header -->
+            <div class="flex items-center justify-between m-8 mr-6 sm:my-6">
+                <!-- Title -->
+                <div>
+                    <div
+                        class="text-2xl font-extrabold tracking-tight leading-none"
+                    >
+                        Meeting Management
+                    </div>
+                    <div class="text-secondary tracking-tight truncate w-60">
+                        {{ data.title }}
+                    </div>
+                    <div class="mt-1">
+                        <div
+                            class="flex items-center space-x-2 ng-star-inserted"
+                            *ngIf="!this.requestId"
+                        >
+                            <a
+                                class="text-primary cursor-pointer"
+                                [routerLink]="'../../../'"
+                                >Back
+                            </a>
+                            <div>/</div>
+                            <div class="ng-star-inserted">Edit</div>
+                        </div>
+                        <div
+                            class="flex items-center space-x-2 ng-star-inserted"
+                            *ngIf="this.requestId"
+                        >
+                            <a
+                                class="text-primary cursor-pointer"
+                                [routerLink]="'../../../../'"
+                                >Back
+                            </a>
+                            <div>/</div>
+                            <div class="ng-star-inserted">Edit</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Close button -->
+                <div class="lg:hidden">
+                    <button
+                        type="button"
+                        mat-icon-button
+                        (click)="drawer.close()"
+                    >
+                        <mat-icon
+                            class="icon-size-5 cursor-pointer material-symbols-outlined"
+                            >close</mat-icon
+                        >
+                    </button>
+                </div>
+            </div>
+            <!-- Panel links -->
+            <div class="flex flex-col divide-y border-t border-b">
+                <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
+                    <div
+                        class="flex px-8 py-2 cursor-pointer"
+                        [ngClass]="{
+                            'hover:bg-gray-100 dark:hover:bg-hover':
+                                !selectedPanel || selectedPanel !== panel.id,
+                            'bg-primary-50 dark:bg-hover':
+                                selectedPanel && selectedPanel === panel.id
+                        }"
+                        (click)="goToPanel(panel.id)"
+                    >
+                        <div>
+                            <div
+                                class="font-medium leading-6"
+                                [ngClass]="{
+                                    'text-primary dark:text-primary-500':
+                                        selectedPanel &&
+                                        selectedPanel === panel.id
+                                }"
+                            >
+                                <div class="flex flex-row gap-2 items-center">
+                                    <div>{{ panel.title }}</div>
+                                    <div
+                                        class="px-2 bg-red-500 text-white rounded-full"
+                                        *ngIf="panel.alertCount > 0"
+                                    >
+                                        {{ panel.alertCount }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-0.5 text-secondary">
+                                {{ panel.description }}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </mat-drawer>
+        <mat-drawer-content class="flex flex-col">
+            <div class="flex-1 flex flex-col px-6 pt-6 pb-6">
+                <!-- Panel header -->
+                <div class="flex items-center">
+                    <!-- Drawer toggle -->
+                    <button
+                        type="button"
+                        class="lg:hidden -ml-2"
+                        mat-icon-button
+                        (click)="drawer.toggle()"
+                    >
+                        <mat-icon class="material-symbols-outlined"
+                            >menu</mat-icon
+                        >
+                    </button>
+
+                    <!-- Panel title -->
+                    <div
+                        class="ml-2 lg:ml-0 text-2xl font-bold tracking-tight leading-none"
+                    >
+                        {{ getPanelInfo(selectedPanel).title }}
+                    </div>
+                </div>
+
+                <!-- Load settings panel -->
+                <div class="mt-4 flex-1 relative">
+                    <ng-container [ngSwitch]="selectedPanel">
+                        <!-- Account -->
+                        <ng-container *ngSwitchCase="'overview'">
+                            <meeting-overview [data]="data"></meeting-overview>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'agenda'">
+                            <meeting-agenda></meeting-agenda>
+                        </ng-container>
+            
+                        <ng-container *ngSwitchCase="'reserve'">
+                            <agenda-reservation></agenda-reservation>
+                        </ng-container>
+         
+                        <ng-container *ngSwitchCase="'attendee'">
+                            <meeting-attendee></meeting-attendee>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'invitation'">
+                            <meeting-invitation></meeting-invitation>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'vote'">
+                            <meeting-vote-result></meeting-vote-result>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'join'">
+                            <join-result></join-result>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'agenda-minute'">
+                            <agenda-minute></agenda-minute>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'minute'">
+                            <minute></minute>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'file'">
+                            <file-open></file-open>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'follow'">
+                            <follow-up></follow-up>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'document-upload'">
+                            <document-upload></document-upload>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+    <!-- <div class="relative flex flex-col  flex-0  py-4 border-b">
+        <div class="text-3xl font-extrabold tracking-tight px-6">Meeting Management</div>
+        <div class="px-6">
+            <div class="flex items-center space-x-2 ng-star-inserted">
+                <a class="text-primary cursor-pointer" [routerLink]="'../../'">Home </a>
+                <div>/</div>
+                <div class="ng-star-inserted">Personal</div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto overflow-hidden sm:overflow-y-auto">
+            <div class="flex flex-auto bg-gray-100 border p-8  sm:overflow-y-auto ">
+                adf
+            </div>
+        </div>
+    </div> -->
+</div>

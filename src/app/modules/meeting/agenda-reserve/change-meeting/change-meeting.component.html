@@ -1,0 +1,44 @@
+<div class="p-6">
+    <div class="font-bold text-lg mb-2">Select new meeting</div>
+    <div class="h-100 border">
+        <div class="flex flex-auto overflow-hidden">
+            <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+                <ng-container *ngIf="(meetings$ | async) as meetings">
+                    <div >
+                        <ng-container *ngIf="meetings.length > 0; else noDatas">
+                            <div class="grid">
+                                <div class="grid change-meeting-grid gap-4 py-2 px-4 border-b  shadow text-md font-semibold text-secondary bg-gray-200 dark:bg-black dark:bg-opacity-5">
+                                    <div>
+                                        Meeting Name
+                                    </div>
+                                    <div>
+                                        Date
+                                    </div>
+                                    <div>
+                                        Time
+                                    </div>
+                                </div>
+                                <ng-container *ngFor="let data of meetings;">
+                                    <div (click)="selectData(data)"
+                                    class="change-meeting-grid px-4  grid items-center gap-4 w-full py-2   border-b cursor-pointer"
+                                    [ngClass]="{'hover:bg-sky-50': !selectId || selectId !== data.id, 'bg-sky-100': selectId && selectId === data.id}"
+                                    >
+                                        <div>{{data.name}} <br> <b>Meeting Type:</b> MC </div>
+                                        <div>{{data.meetingDate | date : 'dd/MM/yyyy'}}</div>
+                                        <div>{{data.timeFrom}} - {{data.timeTo}}</div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+                <ng-template #noDatas>
+                    <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+    <div class="mt-2">
+        <button type="button" mat-raised-button class="bg-sky-700 text-white">Submit</button>
+    </div>
+</div>

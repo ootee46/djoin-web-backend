@@ -1,0 +1,108 @@
+<div class="flex flex-auto overflow-hidden">
+    <div class="flex flex-col flex-auto sm:mb-0 overflow-hidden sm:overflow-y-auto">
+        <ng-container  *ngIf="(datas$ | async) as datas">
+            <ng-container *ngIf="datas.length > 0; else noDatas">
+                <div class="grid">
+                    <div class="z-10 sticky top-0 grid  agenda-grid2 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5" >
+
+                        <div class="text-center">
+                            No
+                        </div>
+                        <div class="text-center">
+                            Agenda
+                        </div>
+                        <div class="text-center">
+                           Time (min)
+                        </div>
+                        <div class="text-center">
+                           Attachment
+                        </div>
+                        <div class="text-center">
+                            Vote
+                         </div>
+                         <div class="text-center">
+                            Vote Open
+                         </div>
+                    </div>
+                    <div>
+                        <ng-container *ngFor="let data of datas;" >
+                            <div class="agenda-grid2 grid items-center gap-4 w-full py-1 px-6  border-b {{bgSteps[0]}}">
+                                <div class="text-center font-bold">{{data.no}}</div>
+                                <div class="font-bold">{{data.title}}</div>
+                                <div class="text-center">{{data.useTime}}</div>
+                                <div class="text-center">
+                                    <ng-container *ngIf="data.isAttachment">
+                                        <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="!data.isAttachment">
+                                        <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                    </ng-container>
+                                </div>
+                                <div class="text-center">
+                                    <ng-container *ngIf="data.isVote">
+                                        <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="!data.isVote">
+                                        <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                    </ng-container>
+                                </div>
+                                <div class="text-center">
+                                    <ng-container *ngIf="data.isVoteOpen">
+                                        <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="!data.isVoteOpen">
+                                        <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <ng-container *ngTemplateOutlet="childAgenda;context:{ itemDatas: data.subAgendas, parentData: data }"></ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+        <ng-template #noDatas>
+            <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+        </ng-template>
+        <ng-template #childAgenda let-itemDatas="itemDatas">
+            <ng-container *ngIf="itemDatas && itemDatas.length > 0">
+                <div>
+                    <ng-container *ngFor="let data of itemDatas;" >
+                        <div class="agenda-grid2 grid items-center gap-4 w-full py-1 px-6  border-b {{bgSteps[data.step]}}" >
+                            <div class="text-center">{{data.no}}</div>
+                            <div  class="ml-{{data.step * 3}} flex flex-row items-center ">
+                                <mat-icon class="mr-2 mt-1 material-symbols-outlined">arrow_forward</mat-icon>
+                                {{data.title}}</div>
+                            <div class="text-center">{{data.useTime}}</div>
+                            <div class="text-center">
+                                <ng-container *ngIf="data.isAttachment">
+                                    <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                </ng-container>
+                                <ng-container *ngIf="!data.isAttachment">
+                                    <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                </ng-container>
+                            </div>
+                            <div class="text-center">
+                                <ng-container *ngIf="data.isVote">
+                                    <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                </ng-container>
+                                <ng-container *ngIf="!data.isVote">
+                                    <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                </ng-container>
+                            </div>
+                            <div class="text-center">
+                                <ng-container *ngIf="data.isVoteOpen">
+                                    <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                </ng-container>
+                                <ng-container *ngIf="!data.isVoteOpen">
+                                    <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <ng-container *ngTemplateOutlet="childAgenda;context:{ itemDatas: data.subAgendas, parentData: data }"></ng-container>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </ng-template>
+    </div>
+</div>

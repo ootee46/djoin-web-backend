@@ -1,0 +1,421 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card" *ngIf="(data$ | async) as data">
+    <!-- Header -->
+    <div class="relative flex-0  py-4 border-b">
+        <!-- Title -->
+        <div class="text-3xl font-extrabold tracking-tight px-6">Approve Agenda</div>
+        <div class="mt-1 px-6">
+            <div class="flex items-center space-x-2 ng-star-inserted">
+                <a class="text-primary cursor-pointer" [routerLink]="'../../'">List of Pending Agenda</a>
+                <div>/</div>
+                <div class="ng-star-inserted">Agenda Detail</div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 flex-auto overflow-auto">
+        <div class="m-4">
+            <div class="p-4 rounded-2xl bg-gray-50 border  mb-6">
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Document No.:</div>
+                    <div class="flex-1">{{data.documentNo}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Meeting Name:</div>
+                    <div class="flex-1">{{data.meetingTitle}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Meeting Date:</div>
+                    <div class="flex-1">{{data.startDate | date : "dd-MM-yyyy"}} {{data.startDate | date : "HH:mm"}} <span *ngIf="data.endDate"> - {{data.endDate | date : "HH:mm"}} </span></div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Agenda Name:</div>
+                    <div class="flex-1">{{data.title}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Objective:</div>
+                    <div class="flex-1">{{data.agendaObjectiveName}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Confidential Level:</div>
+                    <div class="flex-1">{{data.agendaConfidentialName}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Request Date:</div>
+                    <div class="flex-1">{{data.createdDate | date : 'dd/MM/yyyy HH:mm'}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Agenda Status:</div>
+                    <div class="flex-1">{{data.approveStatus}}</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Require Voting:</div>
+                    <div class="flex-1" *ngIf="data.isVote === true">Yes</div>
+                    <div class="flex-1" *ngIf="data.isVote === false">No</div>
+                </div>
+                <div class="flex flex-row gap-4 mb-2">
+                    <div class="w-40 font-semibold">Vote Open:</div>
+                    <div class="flex-1" *ngIf="data.isVoteOpen === true">Yes</div>
+                    <div class="flex-1" *ngIf="data.isVoteOpen === false">No</div>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-4">
+                <div class="flex-1">
+                   <div class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer" (click)="isBookingDetail = !isBookingDetail">
+                      <div class="font-semibold">Booking Detail</div>
+                      <button type="button" *ngIf="isBookingDetail">[-]</button>
+                      <button type="button" *ngIf="!isBookingDetail">[+]</button>
+                   </div>
+                   <div class="flex flex-col p-4 border-x border-b overflow-hidden" *ngIf="isBookingDetail">
+                      <div class="overflow-auto">
+                            <ng-container *ngIf="bookingDetail; else noDatas">
+                                    <div class="flex flex-wrap gap-4">
+                                        {{bookingDetail}}
+                                    </div>
+                            </ng-container>
+                            <ng-template #noDatas>
+                                <div class="p-8 border-t font-semibold tracking-tight text-center">
+                                    Record not found!
+                                </div>
+                            </ng-template>
+
+                      </div>
+                   </div>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row flex-wrap gap-4 mb-4">
+                <div class="flex-1">
+                   <div class="p-2 bg-gray-100 border flex flex-row justify-between cursor-pointer" (click)="isRelationBookingPanel = !isRelationBookingPanel">
+                      <div class="font-semibold">Related Booking</div>
+                      <button type="button" *ngIf="isRelationBookingPanel">[-]</button>
+                      <button type="button" *ngIf="!isRelationBookingPanel">[+]</button>
+                   </div>
+                   <div class="flex flex-col p-4 border-x border-b overflow-hidden" *ngIf="isRelationBookingPanel">
+                      <div class="overflow-auto">
+                            <ng-container *ngIf="relation">
+                                <ng-container *ngIf="relation.length > 0; else noDatas">
+                                    <div class="flex flex-wrap gap-4">
+                                        <ng-container *ngFor="let item of relation; ">
+                                            <div class="p-4 rounded-2xl bg-gray-50 border mb-2" style="flex: 1 1 calc(50% - 1rem); max-width: calc(50% - 1rem);">
+                                                <div class="flex flex-row gap-4 mb-2">
+                                                    <div class="w-40 font-semibold">Request No.:</div>
+                                                    <div class="flex-1">{{item.requestNo}}</div>
+                                                </div>
+                                                <div class="flex flex-row gap-4 mb-2">
+                                                    <div class="w-40 font-semibold">Meeting Name:</div>
+                                                    <div class="flex-1">{{item.meetingName}}</div>
+                                                </div>
+                                                <div class="flex flex-row gap-4 mb-2">
+                                                    <div class="w-40 font-semibold">Meeting Date:</div>
+                                                    <div class="flex-1">{{item.startDate | date : "dd/MM/yyyy"}} {{item.startDate | date : "HH:mm"}} <span *ngIf="item.endDate"> - {{item.endDate | date : "HH:mm"}} </span></div>
+                                                </div>
+                                                <div class="flex flex-row gap-4 mb-2">
+                                                    <div class="w-40 font-semibold">Objective:</div>
+                                                    <div class="flex-1">{{item.objective}}</div>
+                                                </div>
+                                                <div class="flex flex-row gap-4 mb-2">
+                                                    <div class="w-40 font-semibold">Confidential Level:</div>
+                                                    <div class="flex-1">{{item.confidential}}</div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                      </div>
+                   </div>
+                </div>
+            </div>
+            <div class="p-0 mb-6">
+                <div class="flex flex-col sm:flex-row gap-4 mb-4  ">
+                    <div class="flex-1">
+                        <div class="p-2 bg-gray-100 font-semibold border"> Presenters</div>
+                        <div class="flex flex-col p-4 border-x border-b overflow-hidden  bg-white">
+                            <div class="overflow-auto">
+                                <ng-container *ngIf="presenters">
+                                    <ng-container *ngIf="presenters.length > 0; else noDatas">
+                                        <div class="grid">
+                                            <ng-container *ngFor="let data of presenters; ">
+                                                <div class="one-grid grid items-center gap-4 w-full py-2   border-b">
+                                                    <div class="truncate">
+                                                        {{data.name}}
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #noDatas>
+                                    <div class="p-8  border-t font-semibold tracking-tight text-center">Record not found!</div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="p-2 bg-gray-100 font-semibold border"> Exclude Attendee</div>
+                        <div class="p-4 border-x border-b flex flex-col overflow-hidden  bg-white">
+                            <div class="overflow-auto">
+                                <ng-container *ngIf="excludeUsers">
+                                    <ng-container *ngIf="excludeUsers.length > 0; else noDatas">
+                                        <div class="grid">
+                                            <ng-container *ngFor="let data of excludeUsers; ">
+                                                <div class="one-grid grid items-center gap-4 w-full py-2   border-b">
+                                                    <div class="truncate">
+                                                        {{data.name}}
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #noDatas>
+                                    <div class="p-8  border-t font-semibold tracking-tight text-center">Record not found!</div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ng-container  *ngIf="!data.isReview">
+                <div class="mt-8 border-b mb-2 font-medium">Presenters Documents</div>
+                <div class="mt-4 mb-6">
+                    <ng-container *ngIf="data.presenterAttachments">
+                        <ng-container *ngIf="data.presenterAttachments.length > 0; else noDatas">
+                            <div class="grid">
+                                <div class="grid grid-cols-[minmax(160px,_1fr)_160px_120px] z-10 sticky top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                    <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setPresentersSort('fileName')"
+                                >
+                                    File Name
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'fileName'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setPresentersSort('updatedUser')"
+                                >
+                                    Uploaded By
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedUser'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    (click)="setPresentersSort('updatedDate')"
+                                >
+                                    Uploaded Date
+                                        <mat-icon
+                                            class="material-symbols-outlined icon-size-4"
+                                        >
+                                            {{
+                                                sortPresenters.sort === "asc" && sortPresenters.fieldName === 'updatedDate'
+                                                    ? "arrow_upward"
+                                                    : "arrow_downward"
+                                            }}
+                                        </mat-icon>
+                                </div>
+                                </div>
+                                <ng-container
+                                    *ngFor="
+                                        let item of sortArrayByField(
+                                            data.presenterAttachments,
+                                            sortPresenters.fieldName,
+                                            sortPresenters.sort
+                                        )
+                                    "
+                                >
+                                    <div class="grid grid-cols-[minmax(160px,_1fr)_160px_120px] items-center gap-4 w-full py-2 px-6  border-b">
+                                        <div class="truncate">
+                                            <a [openFile]="item" class="underline cursor-pointer">{{item.fileName}}</a>
+                                        </div>
+                                        <div class="truncate">
+                                            {{item.updatedUser}}
+                                        </div>
+                                        <div class="truncate">
+                                            {{item.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <ng-container>
+                    <div class="mt-8 border-b mb-2 font-medium">Attachements (.png, .jpg, .pdf, .docx, .xlsx, .pptx &lt;= 50Mb)</div>
+                    <div class="flex flex-row gap-4 mt-4">
+                        <file-input #attachmentInput [displayText]="''"  [limitSize]="50" [acceptFile]="'.png,.jpg,.pdf,.docx,.xlsx,.pptx'" [resetFileName]="true" [(ngModel)]="attachment" class="flex-1"></file-input>
+                        <search-option [(ngModel)]="documentTypeId" [placeholder]="'Document Type'" [displayText]="''" [options$]="documentTypes$"  [value]="'id'" [text]="'name'" class="w-60"></search-option>
+                        <div><button type="button" (click)="addAttachment(data.id)" class="mt-2" mat-raised-button color="primary">Add</button></div>
+                    </div>
+                    <div class="mt-4">
+                        <ng-container *ngIf="data.attachments">
+                            <ng-container *ngIf="data.attachments.length > 0; else noDatas">
+                                <div class="grid">
+                                    <div class="grid grid-cols-[50px_minmax(160px,_1fr)_200px_160px_120px] z-10 sticky top-0 gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                        <div>
+                                            Action
+                                        </div>
+                                        <div
+                                        class="flex items-center gap-2 cursor-pointer"
+                                        (click)="setAttachmentsSort('fileName')"
+                                    >
+                                        File Name
+                                            <mat-icon
+                                                class="material-symbols-outlined icon-size-4"
+                                            >
+                                                {{
+                                                    sortAttachments.sort === "asc" && sortAttachments.fieldName === 'fileName'
+                                                        ? "arrow_upward"
+                                                        : "arrow_downward"
+                                                }}
+                                            </mat-icon>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 cursor-pointer"
+                                        (click)="
+                                            setAttachmentsSort('documentTypeName')
+                                        "
+                                    >
+                                        Document Type
+                                            <mat-icon
+                                                class="material-symbols-outlined icon-size-4"
+                                            >
+                                                {{
+                                                    sortAttachments.sort === "asc" && sortAttachments.fieldName === 'documentTypeName'
+                                                        ? "arrow_upward"
+                                                        : "arrow_downward"
+                                                }}
+                                            </mat-icon>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 cursor-pointer"
+                                        (click)="setAttachmentsSort('updatedUser')"
+                                    >
+                                        Uploaded By
+                                            <mat-icon
+                                                class="material-symbols-outlined icon-size-4"
+                                            >
+                                                {{
+                                                    sortAttachments.sort === "asc" && sortAttachments.fieldName === 'updatedUser'
+                                                        ? "arrow_upward"
+                                                        : "arrow_downward"
+                                                }}
+                                            </mat-icon>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-2 cursor-pointer"
+                                        (click)="setAttachmentsSort('updatedDate')"
+                                    >
+                                        Uploaded Date
+                                            <mat-icon
+                                                class="material-symbols-outlined icon-size-4"
+                                            >
+                                                {{
+                                                    sortAttachments.sort === "asc" && sortAttachments.fieldName === 'updatedDate'
+                                                        ? "arrow_upward"
+                                                        : "arrow_downward"
+                                                }}
+                                            </mat-icon>
+                                    </div>
+                                    </div>
+                                    <div>
+                                        <ng-container
+                                    *ngFor="
+                                        let item of sortArrayByField(
+                                            data.attachments,
+                                            sortAttachments.fieldName,
+                                            sortAttachments.sort
+                                        )
+                                    "
+                                >
+                                            <div class="grid grid grid-cols-[50px_minmax(160px,_1fr)_200px_160px_120px] items-center gap-4 w-full py-0 px-6  border-b bg-white" cdkDrag>
+                                                <div>
+                                                    <button type="button" mat-icon-button type="button" [matMenuTriggerFor]="moreMenu" aria-label="More" (click)="$event.stopPropagation();">
+                                                        <mat-icon class="material-symbols-outlined">more_vert</mat-icon>
+                                                    </button>
+                                                    <mat-menu #moreMenu="matMenu">
+                                                        <button *ngIf="!item.isApprover" type="button" mat-menu-item (click)="openPermission(item)"><mat-icon class="material-symbols-outlined">lock</mat-icon> View Permission</button>
+                                                        <mat-divider *ngIf="!item.isApprover"></mat-divider>
+                                                        <button *ngIf="item.isApprover" type="button" mat-menu-item (click)="deleteAttachment(item.id)"><mat-icon class="material-symbols-outlined">delete</mat-icon> Delete</button>
+                                                        <mat-divider *ngIf="item.isApprover"></mat-divider>
+                                                    </mat-menu>
+                                                </div>
+                                                <div class="truncate">
+                                                    <a [openFile]="item" class="underline cursor-pointer">{{item.fileName}}</a>
+                                                </div>
+                                                <div>{{item.documentTypeName}}</div>
+                                                <div class="truncate">
+                                                    {{item.updatedUser}}
+                                                </div>
+                                                <div class="truncate">
+                                                    {{item.updatedDate | date : 'dd/MM/yyyy HH:mm'}}
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <div class="mt-8 border-b mb-2 font-medium">History</div>
+            <div class="mb-8" *ngIf="data.approvers">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <td class="text-center">Description</td>
+                            <td class="text-center w-36">Date</td>
+                            <td class="text-center w-60">Action By</td>
+                            <td class="text-center w-36">Status</td>
+                            <td class="text-center">Remark</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of data.approvers">
+                            <td>{{item.stepName}}</td>
+                            <td><span *ngIf="item.actionDate">{{item.actionDate | date : "dd/MM/yyyy HH:mm"}}</span></td>
+                            <td>{{item.approverName}}</td>
+                            <td>{{item.action}}</td>
+                            <td>{{item.remark}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <mat-form-field class="w-full">
+                    <mat-label>Remark (Maximum 400 characters)</mat-label>
+                    <textarea matInput [(ngModel)]="remark"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="flex flex-row gap-4 mb-8" *ngIf="data.requestType === 0 && !data.isReview">
+                <button type="button" (click)="doApprove(true)" mat-raised-button class="bg-green-500 text-white w-30"> Approve </button>
+                <button type="button" (click)="doApprove(false)" mat-raised-button class="bg-red-500 text-white w-30"> Reject </button>
+            </div>
+            <div class="flex flex-row gap-4 mb-8" *ngIf="data.requestType === 0 && data.isReview">
+                <button type="button" (click)="doApprove(true)" mat-raised-button class="bg-green-500 text-white w-30"> Approve Review </button>
+                <button type="button" (click)="doApprove(false)" mat-raised-button class="bg-red-500 text-white w-30"> Reject Review </button>
+            </div>
+            <div class="flex flex-row gap-4 mb-8" *ngIf="data.requestType === 1">
+                <button type="button" (click)="doApproveEdit(true)" mat-raised-button class="bg-green-500 text-white w-30"> Approve Edit</button>
+                <button type="button" (click)="doApproveEdit(false)" mat-raised-button class="bg-red-500 text-white w-30"> Reject Edit</button>
+            </div>
+            <div class="flex flex-row gap-4 mb-8" *ngIf="data.requestType === 2">
+                <button type="button" (click)="doApproveCancel(true)" mat-raised-button class="bg-green-500 text-white w-30"> Approve Cancel</button>
+                <button type="button" (click)="doApproveCancel(false)" mat-raised-button class="bg-red-500 text-white w-30"> Reject Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

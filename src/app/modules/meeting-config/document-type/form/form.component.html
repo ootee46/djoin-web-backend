@@ -1,0 +1,33 @@
+<form #myForm="ngForm"   [formGroup]="dataForm" (submit)="saveData()">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-4 m-0 flex-none" >
+        <div>
+            <mat-form-field class="fuse-mat-no-subscript w-full">
+                <mat-label>Name</mat-label>
+                <input matInput [formControlName]="'name'" maxlength="90" [placeholder]="'Name'">
+            </mat-form-field>
+        </div>
+        <div class="mt-2">
+            <mat-slide-toggle  [formControlName]="'active'"  [color]="'primary'">Active</mat-slide-toggle>
+        </div>
+    </div>
+    <div mat-dialog-actions class="m-0 py-4 px-4 mat-primary bg-gray-100">
+        <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid" >
+            <mat-icon class="material-symbols-outlined mr-1">save</mat-icon>
+            <span *ngIf="!dataForm.disabled">
+                Save
+            </span>
+            <mat-progress-spinner
+                *ngIf="dataForm.disabled"
+                [diameter]="24"
+                [mode]="'indeterminate'"></mat-progress-spinner>
+        </button>
+    </div>
+</form>

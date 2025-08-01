@@ -1,0 +1,8 @@
+<mat-form-field class="fuse-mat-no-subscript   w-full {{controlClass}}" >
+    <mat-label>{{displayText}}</mat-label>
+    <input (click)="picker1.open()" matInput [matDatepicker]="picker1" [min]="minDate" [max]="maxDate"   readonly="true" #dateFrom  [(ngModel)]="output"
+        [required]="isRequired" (dateChange)="doDateChange('change', $event)">
+    <mat-icon  class="material-symbols-outlined cursor-pointer" matSuffix *ngIf="showClear" matDatepickerToggleIcon (click)="clearDate()">clear</mat-icon>
+    <mat-icon  class="material-symbols-outlined ml-1" matSuffix (click)="picker1.open()" style="cursor:pointer; color:#777;">today</mat-icon>
+    <mat-datepicker #picker1></mat-datepicker>
+</mat-form-field>

@@ -1,0 +1,16 @@
+<form #fileInput>
+    <mat-form-field class="w-full fuse-mat-no-subscript">
+        <mat-label *ngIf="displayText">{{displayText}}</mat-label>
+        <mat-icon matSuffix class="secondary-text material-symbols-outlined" style="cursor: pointer"  (click)="openFile()">attach_file</mat-icon>
+
+        <input style="cursor: pointer; z-index: 1; position: relative;" matInput [required]="(_required && !oldData?true:false)" readonly="true" [value]="fileName" (click)="openFile()">
+        <a matPrefix style="cursor: pointer; z-index: 999; display: block;position: relative;" title="View Attachment File" [openFile]='oldData' target="_blank" *ngIf="oldData && oldData.fileUrl">
+            <mat-icon class="material-symbols-outlined">search</mat-icon>
+        </a>
+        <a matPrefix style="cursor: pointer; z-index: 999; display: block;position: relative;" (click)="deleteAttachment()" title="Delete Attachment File" *ngIf="oldData && oldData.fileUrl">
+            <mat-icon class="material-symbols-outlined">delete</mat-icon>
+        </a>
+
+        <input #myFile type="file" class="file-input" [accept]="(acceptFile?acceptFile:'.jpg,.png,.pdf,.docx,.xlsx,.pptx,.mp4')" (change)="onFileSelected($event)">
+    </mat-form-field>
+</form>

@@ -1,0 +1,75 @@
+<form #myForm="ngForm"   [formGroup]="dataForm" (submit)="saveData()">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-4 m-0 flex-none" >
+        <div class="flex flex-row gap-4 mt-4">
+            <div class="flex-1">
+                <search-option formControlName="meetingTypeId"  [placeholder]="null" [displayText]="'Meeting Type'" (selectionChange)="getSubMeetingType($event.value)" [options$]="meetingTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+            <div class="flex-1">
+                <search-option formControlName="meetingSubTypeId"  [placeholder]="null"  [displayText]="'Sub Meeting Type'" [options$]="meetingSubTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+        </div>
+        <div class="flex flex-row gap-4 -mt-3">
+            <div class="flex-1">
+                <search-option formControlName="agendaObjectiveId"  [placeholder]="null"  [displayText]="'Objective'" [options$]="agendaObjectives$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+            <div class="flex-1">
+                <search-option formControlName="agendaConfidentialId"  [placeholder]="null"  [displayText]="'Confidential Level'" [options$]="agendaConfidentials$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+        </div>
+        <div class="flex flex-row gap-4 -mt-3">
+            <div class="flex-1">
+                <search-option formControlName="agendaApproverFlowId"  [placeholder]="null"  [displayText]="'Agenda Workflow'" [options$]="agendaApproverFlows$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+            <div class="flex-1">
+                <mat-form-field class="w-full">
+                    <mat-label>Reject Workflow</mat-label>
+                    <mat-select formControlName="reserveRejectType">
+                        <mat-option [value]="1">End</mat-option>
+                        <mat-option [value]="2">Start Workflow</mat-option>
+                        <mat-option [value]="3">Continue Workflow</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                
+            </div>
+        </div>
+        <mat-divider class="mb-6 "></mat-divider>
+        <div class="flex flex-row gap-4 mt-4">
+            <div class="flex-1">
+                <search-option formControlName="preMeetingApproverId"  [placeholder]="null"  [displayText]="'Pre-Meeting Workflow'" [options$]="approverSteps$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+            <div class="flex-1">
+                <search-option formControlName="postMeetingApproverId"  [placeholder]="null"  [displayText]="'Post-Meeting Workflow'" [options$]="approverSteps$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+        </div>
+
+        <div class="flex flex-row gap-4 mt-2">
+            <div class="flex-1">
+                <search-option formControlName="editApproverId"  [placeholder]="null"  [displayText]="'Edit-Meeting Workflow'" [options$]="approverSteps$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+            <div class="flex-1">
+                <search-option formControlName="cancelApproverId"  [placeholder]="null"  [displayText]="'Cancel-Meeting Workflow'" [options$]="approverSteps$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            </div>
+        </div>
+
+    </div>
+    <div mat-dialog-actions class="m-0 py-4 px-4 mat-primary bg-gray-100">
+        <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid" >
+            <mat-icon class="material-symbols-outlined mr-1">save</mat-icon>
+            <span *ngIf="!dataForm.disabled">
+                Save
+            </span>
+            <mat-progress-spinner
+                *ngIf="dataForm.disabled"
+                [diameter]="24"
+                [mode]="'indeterminate'"></mat-progress-spinner>
+        </button>
+    </div>
+</form>

@@ -1,0 +1,159 @@
+<form #myForm="ngForm" [formGroup]="dataForm" class="h-full flex flex-col p-0 m-0  overflow-hidden" (submit)="saveData()">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">{{dialogTitle}}</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div  class="p-4 m-0 flex-1 flex overflow-y-auto" >
+        <div class="flex-none w-full">
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Account Type</mat-label>
+                    <mat-select formControlName="isLdap" [required]="true" [disabled]="action === 'edit'">
+                        <mat-option [value]="true">Add New Account</mat-option>
+                        <mat-option [value]="false">Add New External Account</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>User Level</mat-label>
+                    <mat-select [required]="true" formControlName="userLevel">
+                        <mat-option [value]="3">Normal User</mat-option>
+                        <mat-option [value]="2" *ngIf="userInfo.userLevel === 1">Admin</mat-option>
+                        <mat-option [value]="1" *ngIf="userInfo.userLevel === 1">Super Admin</mat-option>
+                        <mat-option [value]="4" *ngIf="userInfo.userLevel === 1">Agenda Owner</mat-option>
+                        <mat-option [value]="5" *ngIf="userInfo.userLevel === 1">Agenda Owner Team</mat-option>
+                        <mat-option [value]="6" *ngIf="userInfo.userLevel === 1">Approver</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mb-4">
+                <div>
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Select Member Groups</mat-label>
+                        <mat-select  [multiple]="true" formControlName="userGroups">
+                            <mat-option [value]="item.id" *ngFor="let item of (userGroups$ | async)">{{item.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="!dataForm.get('isLdap').value" class="flex flex-col sm:flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>User Name</mat-label>
+                    <input matInput  formControlName="userName" maxlength="40">
+                </mat-form-field>
+                <div>
+                    <mat-form-field  class="fuse-mat-no-subscript w-full">
+                        <mat-label>Password</mat-label>
+                        <input matInput type="password"  formControlName="password" maxlength="40">
+                    </mat-form-field>
+                    <div class="text-red-600 text-sm" *ngIf="dataForm.get('password')?.errors?.strongPassword">
+                        Invalid Password policy.
+                    </div>
+                    <mat-hint class="text-sm"> Password must be at least 8 characters long and include at least one lowercase letter, one uppercase letter, one number, and one special character.</mat-hint>
+                </div>
+            </div>
+            <div *ngIf="dataForm.get('isLdap').value" class="flex flex-col sm:flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full input-gray" *ngIf="action === 'add'">
+                    <mat-label>Employee Name</mat-label>
+                    <input matInput class="cursor-pointer" (click)="openSearch()" [placeholder]="'Employee Name'" formControlName="name" [readonly]="true">
+                    <button type="button" (click)="openSearch()" mat-icon-button matSuffix>
+                        <mat-icon class="text-black material-symbols-outlined" >person</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full input-gray" *ngIf="action === 'edit'">
+                    <mat-label>Employee Name</mat-label>
+                    <input matInput class="cursor-pointer"  [placeholder]="'Employee Name'" formControlName="name" [readonly]="true">
+                </mat-form-field>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 mb-4" >
+                <date-input [controlClass]="(dataForm?.get('passwordExpire')?.invalid ? 'mat-form-field-invalid':null)" [min]="minDate" class="w-60" *ngIf="!dataForm.get('isLdap').value" [required]="true"   [displayText]="'Password Expire Date'"  formControlName="passwordExpire"></date-input>
+                <date-input [controlClass]="(dataForm?.get('accountExpire')?.invalid ? 'mat-form-field-invalid':null)" [min]="minDate" class="w-60" [required]="true" [displayText]="'Account Expire Date'" formControlName="accountExpire"></date-input>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript">
+                    <mat-label>Title</mat-label>
+                    <mat-select [required]="true" formControlName="titleName">
+                        <mat-option [value]="'Mr.'">Mr.</mat-option>
+                        <mat-option [value]="'Mrs.'">Mrs.</mat-option>
+                        <mat-option [value]="'Miss'">Miss</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>First name</mat-label>
+                    <input matInput [required]="true" formControlName="firstName" maxlength="150">
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Last name</mat-label>
+                    <input matInput [required]="true" formControlName="lastName" maxlength="150">
+                </mat-form-field>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Email Address</mat-label>
+                    <input matInput [required]="true" formControlName="email" maxlength="150">
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Mobile Phone</mat-label>
+                    <input matInput formControlName="mobilePhone"  maxlength="40">
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Office Phone</mat-label>
+                    <input matInput formControlName="officePhone"  maxlength="40">
+                </mat-form-field>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Department</mat-label>
+                    <input matInput formControlName="department"  maxlength="150">
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Job Title</mat-label>
+                    <input matInput formControlName="jobTitle"  maxlength="150">
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Company</mat-label>
+                    <input matInput formControlName="company"  maxlength="150">
+                </mat-form-field>
+            </div>
+            <div class="mb-4" [hidden]="!dataForm.get('userLevel') || (dataForm.get('userLevel').value !== 1 && dataForm.get('userLevel').value !== 2)">
+                <div class="mb-4 border-b"></div>
+                <div class="mt-2 mb-4">
+                    <mat-slide-toggle  [formControlName]="'allMeetingRoom'"  [color]="'primary'">All Meeting Room</mat-slide-toggle>
+                </div>
+                <div [hidden]="dataForm.get('allMeetingRoom').value">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Select Meeting Room</mat-label>
+                        <mat-select  [multiple]="true" formControlName="meetingRooms">
+                            <mat-option [value]="item.id" *ngFor="let item of (meetingRooms$ | async)">{{item.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <ng-container *ngIf="dataForm.get('userLevel') && dataForm.get('userLevel').value !== 3">
+                <div class="mb-2 border-b text-2xl font-bold">Approvers</div>
+                <div *ngFor="let item of approverForms">
+                    <div class="w-full flex flex-row gap-4 items-center">
+                        <div class="w-20">{{item.positionTitle}}</div>
+                        <div class="flex-1">
+                            <select-search class="w-full" [options]="allUsers" [value]="'id'" [text]="'name'" [(ngModel)]="item.approverId" [ngModelOptions]="{standalone: true}"></select-search>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <div class="mt-4 mb-6">
+                <mat-slide-toggle  [formControlName]="'active'"  [color]="'primary'">Active</mat-slide-toggle>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="m-0 py-2 px-4 mat-primary bg-gray-100">
+      <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid">
+          <span *ngIf="!dataForm.disabled">
+              Save
+          </span>
+          <mat-progress-spinner *ngIf="dataForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+      </button>
+    </div>
+</form>

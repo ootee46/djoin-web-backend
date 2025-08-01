@@ -1,0 +1,194 @@
+<div class="h-full p-8" *ngIf="data$ | async as data">
+    <ng-container *ngIf="user && (user.userLevel === 1 || user.userLevel === 2 || user.userLevel === 4 || user.userLevel === 5 )"
+        >
+        <div class="flex flex-row gap-4 mt-4">
+                <div class="flex-1" *ngIf="isPrePost">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >group</mat-icon
+                        >
+                        Line Approve
+                    </div>
+                    <ng-container *ngIf="lineApprove && lineApprove.length > 0">
+                        <div
+                            class="flex flex-col p-4 pl-12 py-8 border border-t-0 border-gray-300 rounded-b-2xl"
+                        >
+                            <ng-container
+                                *ngFor="let item of lineApprove; let index = index"
+                            >
+                                <span>
+                                    Approver {{ index + 1 }} :
+                                    {{ item.fullName }}</span
+                                >
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="lineApprove && lineApprove.length === 0">
+                        <div
+                            class="flex flex-col p-4 pl-12 py-8 border border-t-0 border-gray-300 rounded-b-2xl"
+                        >
+                        <span>No Approver Assigned</span>
+                    </div>
+                    </ng-container>
+                </div>
+                <button
+                    *ngIf="isPrePost"
+                    type="button"
+                    class="ml-4 mr-6"
+                    mat-flat-button
+                    [color]="'primary'"
+                    (click)="create()"
+                >
+                    <mat-icon class="icon-size-5 material-symbols-outlined"
+                        >add_circle</mat-icon
+                    >
+                    <span class="ml-2 mr-1">Book New Agenda</span>
+                </button>
+        </div>
+        <ng-container *ngIf="user && (user.userLevel === 1 || user.userLevel === 2 )" >
+            <div class="flex flex-row gap-4 mt-4">
+                <div class="flex-1">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >business_center</mat-icon
+                        >
+                        Your Package
+                    </div>
+                    <div
+                        class="p-4 py-8 text-center border border-t-0 border-gray-300 rounded-b-2xl"
+                    >
+                        <span class="text-4xl text-blue-500 font-bold">{{
+                            data.packageName
+                        }}</span>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >save</mat-icon
+                        >
+                        Remaining Useage
+                    </div>
+                    <div
+                        class="p-4 py-8 text-center border border-t-0 border-gray-300 rounded-b-2xl"
+                    >
+                        <span class="text-4xl text-gray-500 font-bold"
+                            >{{ data.diskUse || 0 }} / {{ data.diskLimit }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >group</mat-icon
+                        >
+                        Unique Users
+                    </div>
+                    <div
+                        class="p-4 py-8 text-center border border-t-0 border-gray-300 rounded-b-2xl"
+                    >
+                        <span class="text-4xl text-green-500 font-bold"
+                            >{{ data.userUse || 0 }} / {{ data.userLimit }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row gap-4 mt-4">
+                <div class="flex-1">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >groups_3</mat-icon
+                        >
+                        Meeting per Year
+                    </div>
+                    <div
+                        class="p-4 py-8 text-center border border-t-0 border-gray-300 rounded-b-2xl"
+                    >
+                        <span class="text-4xl text-orange-500 font-bold">{{
+                            data.thisYearMeeting | number
+                        }}</span>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >upcoming</mat-icon
+                        >
+                        Upcoming Meeting
+                    </div>
+                    <div
+                        class="p-4 py-8 text-center border border-t-0 border-gray-300 rounded-b-2xl"
+                    >
+                        <span class="text-4xl text-yellow-500 font-bold"
+                            >{{ data.upcomeMeeting | number }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div
+                        class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300 flex items-center"
+                    >
+                        <mat-icon class="material-symbols-outlined mr-2"
+                            >summarize</mat-icon
+                        >
+                        Total Meeting
+                    </div>
+                    <div
+                        class="p-4 py-8 text-center border border-t-0 border-gray-300 rounded-b-2xl"
+                    >
+                        <span class="text-4xl text-pink-500 font-bold"
+                            >{{ data.totalMeeting | number }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="user && user.userLevel === 3">
+        <div class="z-10 relative flex flex-col items-center">
+            <div class="w-30 m-auto mb-4">
+                <img src="assets/images/logo/djoin-logo.png" />
+            </div>
+
+            <h2 class="text-xl font-semibold">Welcome to</h2>
+            <div
+                class="mt-2 text-4xl font-extrabold tracking-tight leading-tight text-center"
+            >
+                D-Join
+            </div>
+        </div>
+    </ng-container>
+    <!-- <div class="flex flex-row gap-4 mt-4">
+    <div class="flex-1">
+      <div class="border rounded-t-2xl bg-gray-100  font-semibold p-3 border-gray-300  flex items-center"><mat-icon class="material-symbols-outlined mr-2">groups_3</mat-icon> This Year Meeting</div>
+      <div class="p-4 py-8 text-center border border-t-0  border-gray-300  rounded-b-2xl">
+        <span class="text-4xl text-orange-500 font-bold">{{data.thisYearMeeting | number}}</span>
+      </div>
+    </div>
+    <div  class="flex-1">
+      <div class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300  flex items-center"><mat-icon class="material-symbols-outlined mr-2">upcoming</mat-icon> Upcoming Meeting</div>
+      <div class="p-4 py-8 text-center border border-t-0  border-gray-300  rounded-b-2xl">
+        <span class="text-4xl text-yellow-500 font-bold">{{data.upcomeMeeting | number}} </span>
+      </div>
+    </div>
+    <div  class="flex-1">
+      <div class="border rounded-t-2xl bg-gray-100 font-semibold p-3 border-gray-300  flex items-center"><mat-icon class="material-symbols-outlined mr-2">summarize</mat-icon> Total Meeting</div>
+      <div class="p-4 py-8 text-center border border-t-0  border-gray-300  rounded-b-2xl">
+        <span class="text-4xl text-pink-500 font-bold">{{data.totalMeeting | number}}   </span>
+      </div>
+    </div>
+  </div> -->
+</div>

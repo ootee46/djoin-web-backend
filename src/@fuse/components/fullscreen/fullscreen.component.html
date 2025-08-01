@@ -1,0 +1,10 @@
+<!-- Button -->
+<button
+    type="button"
+    mat-icon-button
+    [matTooltip]="tooltip || 'Toggle Fullscreen'"
+    (click)="toggleFullscreen()">
+    <mat-icon class="material-symbols-outlined" *ngIf="!isFullscreen">fullscreen</mat-icon>
+    <mat-icon class="material-symbols-outlined" *ngIf="isFullscreen">close_fullscreen</mat-icon>
+</button>
+

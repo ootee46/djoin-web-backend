@@ -1,0 +1,17 @@
+<div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <!-- Header -->
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 border-b">
+        <!-- Loader -->
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <!-- Title -->
+        <div class="text-3xl font-extrabold tracking-tight px-6">Calendar</div>
+    </div>
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto m-6 ">
+            <span #tooltip="matTooltip" matTooltip="Info about the action"></span>
+            <full-calendar class="w-full h-full" id="calendar" [options]="calendarOptions"></full-calendar>
+        </div>
+    </div>
+</div>

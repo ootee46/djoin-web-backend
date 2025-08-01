@@ -1,0 +1,100 @@
+<div class="h-full flex flex-col flex-auto  mt-2 absolute w-full">
+    <mat-drawer-container class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-white">
+        <div class="flex flex-col sm:inset-0 sm:overflow-hidden sm:absolute z-0">
+            <div class="flex ml-4 my-4">
+                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript fuse-mat-rounded min-w-72 mr-4 w-full">
+                    <mat-icon class="icon-size-5 material-symbols-outlined" matPrefix>search</mat-icon>
+                    <input matInput [(ngModel)]="searchQuery.kw" [autocomplete]="'off'" (keyup.enter)="doSearch()">
+                    <div matSuffix class="text-center text-md "><a class="cursor-pointer" (click)="toggleAdvanceSearch()"><u>Advanced</u></a></div>
+                    <button type="button" mat-icon-button *ngIf="searchQuery.kw" (click)="clearSearch()" matSuffix>
+                        <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="flex flex-row gap-4 justify-center my-4" *ngIf="isAdvance">
+                <search-option class="w-full md:w-[200px] " [showAll]="true" [placeholder]="'All Meeting Room'" [allText]="'All Meeting Room'" [class]="'fuse-mat-rounded fuse-mat-dense fuse-mat-no-subscript'" [(ngModel)]="searchQuery.catId" [displayText]="'Meeting Room'" [options$]="meetingGroups$" [value]="'id'" [text]="'name'"></search-option>
+                <search-option class="w-full md:w-[200px] " [showAll]="true" [placeholder]="'All Meeting Type'" [allText]="'All Meeting Type'" [class]="'fuse-mat-rounded fuse-mat-dense fuse-mat-no-subscript'" [(ngModel)]="searchQuery.catId2" [displayText]="'Meeting Type'" [options$]="meetingTypes$" [value]="'id'" [text]="'title'"></search-option>
+                <date-input [displayText]="'Request Date From'" [rangeDate]="searchQuery.end_date2" [rangeType]="'start'" [controlClass]="'fuse-mat-dense fuse-mat-rounded '" [(ngModel)]="searchQuery.start_date2" class="w-full md:w-[180px]" [showClear]="true"></date-input>
+                <date-input [displayText]="'Request Date To'" [rangeDate]="searchQuery.start_date2" [rangeType]="'end'" [controlClass]="'fuse-mat-dense fuse-mat-rounded '" [(ngModel)]="searchQuery.end_date2" lass="w-full md:w-[180px]" [showClear]="true"></date-input>
+                <date-input [displayText]="'Meeting Date From'" [rangeDate]="searchQuery.end_date" [rangeType]="'start'" [controlClass]="'fuse-mat-dense fuse-mat-rounded '" [(ngModel)]="searchQuery.start_date" class="w-full md:w-[180px]" [showClear]="true"></date-input>
+                <date-input [displayText]="'Meeting Date To'" [rangeDate]="searchQuery.start_date" [rangeType]="'end'" [controlClass]="'fuse-mat-dense fuse-mat-rounded '" [(ngModel)]="searchQuery.end_date" class="w-full md:w-[180px]" [showClear]="true"></date-input>
+                <button type="button" (click)="doSearch()" mat-raised-button color="primary" class="mt-6 min-w-24 ">
+                    <mat-icon class="icon-size-6 material-symbols-outlined">search</mat-icon> <span>Search</span>
+                </button>
+            </div>
+            <div class="flex flex-auto overflow-hidden">
+                <div class="flex flex-col flex-auto sm:mb-18 sm:overflow-hidden overflow-auto sm:overflow-y-auto">
+                    <ng-container *ngIf="(listData$ | async) as listData">
+                        <ng-container *ngIf="listData.datas.length > 0; else noDatas">
+                            <div class="grid">
+                                <div class="z-10 sticky top-0 grid
+                          grid-cols-[120px_minmax(200px,_1fr)_minmax(200px,_1fr)_200px_100px_140px]
+                          gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                    <div>
+                                        Document No.
+                                    </div>
+                                    <div>
+                                        Meeting Info
+                                    </div>
+                                    <div>
+                                        Agenda
+                                    </div>
+                                    <div>
+                                        Requester
+                                    </div>
+                                    <div>
+                                        Request Date
+                                    </div>
+                                    <div>
+                                        Status
+                                    </div>
+                                </div>
+                                <ng-container *ngFor="let data of listData.datas; trackBy: trackByFn">
+                                    <div class=" grid
+                              grid-cols-[120px_minmax(200px,_1fr)_minmax(200px,_1fr)_200px_100px_140px]
+                              items-center gap-4 w-full py-2 px-6  border-b cursor-pointer hover:bg-gray-100 " (click)="viewDetal(data)">
+                                        <div>
+                                            {{data.documentNo}}
+                                        </div>
+                                        <div>
+                                            <b>Meeting Name: </b> <span>{{data.meetingTitle}}</span><br>
+                                            <b>Meeting Type: </b> <span class="mr-6">{{data.meetingTypeName}}</span><br>
+                                            <b>Sub Meeting Type: </b> <span>{{data.meetingSubTypeName}}</span><br>
+                                            <b>Meeting Date: </b> {{data.startDate | date : 'dd/MM/yyyy'}} {{data.startDate | date : "HH:mm"}} - {{data.endDate | date : 'HH:mm'}}<br>
+                                            <b>Agenda Owner: </b> <span>{{data.agendaOwnerName}}</span><br>
+                                        </div>
+                                        <div>
+                                            {{data.title}}
+                                        </div>
+                                        <div>
+                                            {{data.requesterName}}
+                                        </div>
+                                        <div>
+                                            {{data.createdDate | date : 'dd/MM/yyyy HH:mm'}}
+                                        </div>
+                                        <div>
+                                            {{data.approveStatus}}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <mat-paginator #paginator class=" sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="listData.totalRecord" [pageIndex]="listData.page" [pageSize]="listData.pageSize" [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true">
+                                </mat-paginator>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noDatas>
+                        <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+        <mat-drawer class="w-11/12 z-10" [autoFocus]="false" [mode]="'over'" [position]="'end'"   #matDrawer>
+            <div class="my-2 mb-4 border-b flex flex-row items-center justify-end">
+                <div>
+                    <button type="button" mat-icon-button (click)="closeDetail()"><mat-icon class="material-symbols-outlined">close</mat-icon></button>
+                </div>
+            </div>
+            <dashboard-minute-approve-detail [data$]="detail$"></dashboard-minute-approve-detail>
+        </mat-drawer>
+    </mat-drawer-container>
+</div>

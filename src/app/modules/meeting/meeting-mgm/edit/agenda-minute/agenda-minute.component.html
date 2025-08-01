@@ -1,0 +1,258 @@
+<mat-drawer-container class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <div class="flex flex-auto overflow-hidden">
+        <div class="flex flex-col flex-auto sm:mb-0 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(listData$ | async) as listData">
+                <ng-container *ngIf="listData.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="z-10 sticky top-0 grid  agenda-minute-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div>
+                                Agenda
+                            </div>
+                            <div>
+                                Minutes Status
+                            </div>
+                        </div>
+                        <div>
+                            <ng-container *ngFor="let data of listData;">
+                                <div (click)="openDetail(data.id)" class="agenda-minute-grid grid items-center gap-4 w-full py-4 px-6  border-b hover:bg-sky-100 cursor-pointer ">
+                                    <div>
+                                        <div class="font-bold flex flex-row items-center">
+                                            <span>{{data.title}}</span>
+                                        </div>
+                                        <div>[ {{data.agendaReserveName}} | {{data.agendaReserveDate | date : 'dd/MM/yyyy HH:mm'}}]</div>
+                                    </div>
+                                    <div>
+                                        {{data.minuteRequestStatus || 'N/A'}}
+                                    </div>
+                                </div>
+                                <ng-container *ngTemplateOutlet="childAgenda;context:{ itemDatas: data.subAgendas, parentData: data }"></ng-container>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8 sm:p-16  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+            <ng-template #childAgenda let-itemDatas="itemDatas">
+                <ng-container *ngIf="itemDatas && itemDatas.length > 0">
+                    <div>
+                        <ng-container *ngFor="let data of itemDatas;">
+                            <div class="agenda-minute-grid grid items-center gap-4 w-full py-1 px-6  border-b {{bgSteps[data.step]}}">
+                                <div class="ml-{{data.step * 3}} flex flex-row items-center ">
+                                    <mat-icon  class="mr-2 mt-1 material-symbols-outlined">arrow_forward</mat-icon>
+                                    {{data.title}}
+                                </div>
+                                <div>-</div>
+                            </div>
+                            <ng-container *ngTemplateOutlet="childAgenda;context:{ itemDatas: data.subAgendas, parentData: data }"></ng-container>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </div>
+    </div>
+    <mat-drawer class="w-11/12" [autoFocus]="false" [mode]="'over'" [position]="'end'" [opened]="false" #matDrawer>
+        <div class="px-6 py-2" *ngIf="detailMode === 'agenda' && (minuteDetail$ | async) as data">
+            <div class="my-2 mb-4 border-b flex flex-row items-center justify-between">
+                <div class="font-bold text-xl">
+                    Agenda Minutes
+                </div>
+                <div>
+                    <button type="button" mat-icon-button (click)="closeDetail()"><mat-icon class="material-symbols-outlined">close</mat-icon></button>
+                </div>
+            </div>
+
+            <div class="py-2 my-2 mb-6 border rounded-2xl p-4 bg-gray-100 flex flex-row items-center justify-between">
+                <div>
+                    <div class="mb-2 "><b>Agenda : </b>{{data.agenda.title || '-'}}</div>
+                    <div class="flex flex-row gap-6 mb-2">
+                        <div><b>Agenda Owner :</b> {{data.agenda.agendaReserveName || '-'}}</div>
+                        <div><b>Reserve Date:</b> {{data.agenda.agendaReserveDate | date : 'dd/MM/yyyy'}}</div>
+                        <div><b>Status:</b> {{data.agenda.minuteRequestStatus || 'N/A'}}</div>
+                    </div>
+                    <div class="mb-2 " *ngIf="data.minuteRequest"><b>Minutes File : </b><a *ngIf="data.minuteRequest.fileUrl" class="cursor-pointer" [openFile]="data.minuteRequest.fileUrl"><u>{{data.minuteRequest.fileName}}</u></a></div>
+
+                </div>
+            </div>
+            <div class="mb-4" *ngIf="!data.minuteRequest || (data.minuteRequest.approveStatus === 'Rejected' && data.reserveRejectType !== 1)">
+                <div class="mb-2">
+                    <file-input [limitSize]="50" [acceptFile]="'.png,.jpg,.pdf,.docx,.xlsx,.pptx'"  [displayText]="'Upload Agenda Minutes of Meeting (.png, .jpg, .pdf, .docx, .xlsx, .pptx &lt;= 50Mb)'" [(ngModel)]="minuteRequestFile"></file-input>
+                </div>
+                <div><button type="button"  (click)="submit()" mat-raised-button class="bg-sky-700 w-20 text-white">Submit </button></div>
+            </div>
+            <!-- <div class="border-b pb-2 mb-4 font-semibold">Minutes Revision</div>
+            <div class="mb-6">
+                <table class="table w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th>
+                                File Name
+                            </th>
+                            <th class="w-20">
+                                Current
+                            </th>
+                            <th class="w-50">
+                                By
+                            </th>
+                            <th class="w-40">
+                                Date
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a class="underline" href="#">Minutes 3</a></td>
+                            <td class="text-center">Yes</td>
+                            <td>FirstName1 LastName1</td>
+                            <td>20 Jan 2022 12:30</td>
+                        </tr>
+                        <tr>
+                            <td><a class="underline" href="#">Minutes 2</a></td>
+                            <td class="text-center">No</td>
+                            <td>FirstName1 LastName1</td>
+                            <td>20 Jan 2022 12:30</td>
+                        </tr>
+                        <tr>
+                            <td><a class="underline" href="#">Minutes 1</a></td>
+                            <td class="text-center">No</td>
+                            <td>FirstName1 LastName1</td>
+                            <td>20 Jan 2022 12:30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+
+            <ng-container *ngIf="data.histories && data.histories.length > 0">
+                <div class="border-b pb-2 mb-4 font-semibold">Minutes Approval History</div>
+                <div>
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th>Item</th>
+                                <th class="w-30">Approver Attachment</th>
+                                <th class="w-40">File</th>
+                                <th class="w-50">Uploaded By</th>
+                                <th class="w-40">Action</th>
+                                <th class="w-40">Last Updated</th>
+                                <th class="w-40">Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of data.histories">
+                                <td>{{item.stepName}}</td>
+                                <td class="text-center">
+                                    <ng-container *ngFor="let attachment of item.attachments; let last = last">
+                                        <a class="cursor-pointer underline"  [openFile]="attachment" >{{attachment.fileName}}</a>
+                                        <span *ngIf="!last"><br></span>
+                                    </ng-container>
+                                </td>
+                                <td><a *ngIf="item.fileUrl" class="cursor-pointer" [openFile]="item.fileUrl"><u>{{item.fileName}}</u></a></td>
+                                <td>{{item.approverName || '-'}}</td>
+                                <td>{{item.action || '-'}}</td>
+                                <td>{{item.actionDate | date : 'dd/MM/yyyy HH:mm' || '-'}}</td>
+                                <td>{{item.remark || '-'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+        </div>
+        <div class="px-6 py-2" *ngIf="detailMode === 'minute'">
+            <div class="my-2 mb-4 border-b flex flex-row items-center justify-between">
+                <div class="font-bold text-xl">
+                    Minutes of Meeting
+                </div>
+                <div>
+                    <button type="button" mat-icon-button (click)="closeDetail()"><mat-icon class="material-symbols-outlined">close</mat-icon></button>
+                </div>
+            </div>
+            <div class="mb-4 mt-6">
+                <div class="mb-2">
+                    <file-input [displayText]="'Upload Minutes of Meeting (.png, .jpg, .pdf, .docx, .xlsx, .pptx &lt;= 50Mb)'" [limitSize]="50" [acceptFile]="'.png,.jpg,.pdf,.docx,.xlsx,.pptx'"   [(ngModel)]="minuteFile"></file-input>
+                </div>
+                <div><button type="button" (click)="addMinute()" mat-raised-button class="bg-sky-700 w-20 text-white">Submit </button></div>
+            </div>
+            <ng-container *ngIf="(minuteHistories$ | async) as minuteHistories">
+                <ng-container *ngIf="minuteHistories.length > 0">
+                    <div class="border-b pb-2 mb-4 font-semibold">Minutes Revision</div>
+                    <div class="mb-6">
+                        <table class="table w-full">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th>
+                                        File Name
+                                    </th>
+                                    <th class="w-20">
+                                        Current
+                                    </th>
+                                    <th class="w-50">
+                                        Uploaded By
+                                    </th>
+                                    <th class="w-40">
+                                        Last Updated
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of minuteHistories">
+                                    <td><a class="underline cursor-pointer"  [openFile]="item">{{item.fileName}}</a></td>
+                                    <td class="text-center">{{(item.realFileName === meeting.minuteRealFileName ? 'Yes': 'No')}}</td>
+                                    <td>{{item.createdUser}}</td>
+                                    <td>{{item.createdDate | date : 'dd/MM/yyyy HH:mm'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="px-6 py-2" *ngIf="detailMode === 'confirm'">
+            <div class="my-2 mb-4 border-b flex flex-row items-center justify-between">
+                <div class="font-bold text-xl">
+                    Minutes Confirmation
+                </div>
+                <div>
+                    <button type="button" mat-icon-button (click)="closeDetail()"><mat-icon class="material-symbols-outlined">close</mat-icon></button>
+                </div>
+            </div>
+            <div class="mb-6 mt-6 flex flex-row gap-4 items-center border-b pb-4">
+                <div><button type="button" (click)="openConfirmForm()" mat-raised-button class="mt-4 bg-sky-700 w-42 text-white">Send Minutes Confirm </button></div>
+            </div>
+            <ng-container *ngIf="(minuteConfirms$ | async) as minuteConfirms">
+                <ng-container *ngIf="minuteConfirms.length > 0">
+                    <div class="pb-2 mb-4 border-b">
+                        <div class="font-semibold text-xl">Attendee Confirmations</div>
+                    </div>
+                    <div>
+                        <table class="table w-full">
+                            <thead>
+                                <tr class="bg-gray-200">
+                                    <th>Name</th>
+                                    <th class="w-20">Confirm</th>
+                                    <th class="w-40">Confirm Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of minuteConfirms">
+                                    <td>{{item.name}}</td>
+                                    <td class="text-center">
+                                        <ng-container *ngIf="item.isConfirm === true">
+                                            <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.isConfirm === false ">
+                                            <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.isConfirm === null ">N/A </ng-container>
+                                    </td>
+                                    <td><span *ngIf="item.confirmDate">{{item.confirmDate | date : 'dd/MM/yyyy HH:mm'}}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </mat-drawer>
+
+</mat-drawer-container>

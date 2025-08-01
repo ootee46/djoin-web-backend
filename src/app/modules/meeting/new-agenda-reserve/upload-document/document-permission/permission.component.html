@@ -1,0 +1,71 @@
+<div class="flex flex-col h-full">
+    <mat-toolbar matDialogTitle class="bg-sky-700 text-white m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">Set Permission</span>
+            <button class="items-end text-white" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="text-white material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-6 m-0  flex-1">
+        <div class="border bg-gray-100 p-2 rounded-2xl mb-4">
+            <div class="font-bold">Set Permission for</div>
+            <div class="flex flex-row wrapper gap-6">
+                <div *ngFor="let item of datas">{{item.fileName}}</div>
+            </div>
+        </div>
+        <div class="border flex flex-row gap-4 bg-gray-100 mb-4 px-4 py-2 rounded-2xl ">
+            <search-option [(ngModel)]="groupId" (selectionChange)="getUser()" class="flex-1" [displayText]="'Member Group'" [options$]="userGroups$" [value]="'id'" [text]="'name'" [placeholder]="'Select Member Group'" [showAll]="true"></search-option>
+            <search-option [(ngModel)]="userId" [showAll]="true" (selectionChange)="filterUser()" class="flex-1" [displayText]="'User'" [options$]="filterUsers$" [value]="'id'" [text]="'name'" [placeholder]="'Select Users'"></search-option>
+        </div>
+        <div class="overflow-auto">
+            <ng-container *ngIf="(filterPermissions$ | async) as permissions">
+                <ng-container *ngIf="permissions.length > 0; else noDatas">
+                    <div class="grid">
+                        <div class="z-10 sticky top-0 grid items-center  popup-permission-grid gap-4 py-2 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div>
+                                Read Only<br>
+                                <mat-slide-toggle [(ngModel)]="isReadAll" (change)="toggleRead()"></mat-slide-toggle>
+                            </div>
+                            <div>
+                                Export Only<br>
+                                <mat-slide-toggle [(ngModel)]="isDownloadAll" (change)="toggleDownload()"></mat-slide-toggle>
+                            </div>
+                            <div>
+                                Name
+                            </div>
+                        </div>
+                        <ng-container *ngFor="let item of permissions; ">
+                            <div class="popup-permission-grid grid items-center gap-4 w-full py-2 px-6  border-b">
+                                <div>
+                                    <mat-slide-toggle (change)="checkPermissionChange(item,'read')" [(ngModel)]="item.isRead"></mat-slide-toggle>
+                                </div>
+                                <div>
+                                    <mat-slide-toggle (change)="checkPermissionChange(item,'download')" [(ngModel)]="item.isDownload"></mat-slide-toggle>
+                                </div>
+                                <div class="truncate">
+                                    {{item.name}}
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+            <ng-template #noDatas>
+                <div class="p-8  border-t font-semibold tracking-tight text-center">Record not found!</div>
+            </ng-template>
+        </div>
+    </div>
+    <div mat-dialog-actions class="m-0 py-4 px-4 mat-primary bg-gray-100">
+        <button type="button" (click)="close()" mat-raised-button color="primary" class="save-button mat-accent">
+            <span>
+                Close
+            </span>
+        </button>
+        <button type="button" (click)="saveData()" mat-raised-button color="primary" class="save-button mat-accent">
+            <span>
+                Save
+            </span>
+        </button>
+    </div>
+</div>

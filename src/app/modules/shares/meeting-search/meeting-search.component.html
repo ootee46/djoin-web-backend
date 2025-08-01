@@ -1,0 +1,58 @@
+<div class="flex flex-col h-full">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row clas="flex flex-row w-full">
+            <span class="title dialog-title flex-1">Search</span>
+            <button class="items-end" type="button" mat-icon-button (click)="close()" aria-label="Close dialog">
+                <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+    <div mat-dialog-content class="p-6 m-0  overflow-hidden inset-0 flex flex-col flex-auto">
+        <div class="flex flex-row gap-2 items-center">
+            <mat-form-field class="w-full">
+                <mat-button *ngIf="query.kw" (click)="clearSearch()" matSuffix>
+                    <mat-icon class="icon-size-5 cursor-pointer material-symbols-outlined">close</mat-icon>
+                </mat-button>
+                <mat-label>Keyword</mat-label>
+                <input matInput [(ngModel)]="query.kw" (keyup.enter)="doSearch()">
+            </mat-form-field>
+            <div>
+                <button class="mt-2" mat-raised-button type="button" color="primary" (click)="doSearch()" matSuffix>Search</button>
+            </div>
+        </div>
+        <div class="flex flex-auto overflow-hidden">
+            <div class="flex flex-col flex-auto overflow-y-auto">
+                <ng-container *ngIf="(listData$ | async) as listData">
+                    <ng-container *ngIf="listData.datas.length > 0; else noDatas">
+                        <div class="grid">
+                            <div class="z-10 sticky top-0 grid grid-cols-[150px_minmax(200px,1fr)_130px]  gap-4 py-2 px-4 shadow text-md font-semibold text-secondary bg-gray-50 " >
+                                <div>
+                                    Meeting No.
+                                </div>
+                                <div>
+                                    Meeting Name
+                                </div>
+                                <div>
+                                    Date
+                                </div>
+                            </div>
+                            <div  *ngIf="(listData$ | async) as listData">
+                                <div  *ngFor="let item of listData.datas"
+                                (click)="selectData(item)"
+                                class="grid  hover:bg-gray-100 cursor-pointer grid-cols-[150px_minmax(200px,1fr)_130px]  items-center gap-4 w-full py-2 px-4  border-b">
+                                    <div>{{item.meetingNo}}</div>
+                                    <div>{{item.title}}</div>
+                                    <div>{{item.startDate | date : 'dd/MM/yyyy HH:mm'}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #noDatas>
+    <div class="p-8 sm:p-16  border-t tracking-tight text-center">Record not found!</div>
+</ng-template>

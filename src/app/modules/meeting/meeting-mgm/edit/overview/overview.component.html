@@ -1,0 +1,121 @@
+<form #myForm="ngForm"  (submit)="doSave()"  [formGroup]="dataForm" >
+    <div class="flex flex-col md:flex-row gap-4">
+        <!-- <mat-form-field class="w-full">
+            <mat-label>Meeting Room</mat-label>
+            <mat-select  formControlName="meetingRoomId">
+                <mat-option [value]="item.id" *ngFor="let item of (meetingGroups$ | async)">{{item.name}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+
+        <search-option formControlName="meetingRoomId" [placeholder]="null" [displayText]="'Meeting Room'" [options$]="meetingGroups$"  [value]="'id'" [text]="'name'" class="w-full"></search-option>
+        <search-option formControlName="meetingTypeId"  [placeholder]="null" [displayText]="'Meeting Type'" (selectionChange)="getMeetingSubType()" [options$]="meetingTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+        <search-option formControlName="meetingSubTypeId"  [placeholder]="null"  [displayText]="'Sub Meeting Type'" [options$]="meetingSubTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+        <search-option formControlName="agendaApproverFlowId"  [placeholder]="null" [displayText]="'Agenda Workflow'" [options$]="agendaApproveFlows$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+
+        <!-- <mat-form-field class="w-full">
+            <mat-label>Meeting Type</mat-label>
+            <mat-select formControlName="meetingTypeId" (selectionChange)="getMeetingSubType()">
+                <mat-option [value]="null"></mat-option>
+                <mat-option [value]="item.id" *ngFor="let item of (meetingTypes$ | async)">{{item.title}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+        <!-- <mat-form-field class="w-full">
+            <mat-label>Sub Meeting Type</mat-label>
+            <mat-select formControlName="meetingSubTypeId">
+                <mat-option [value]="null"></mat-option>
+                <mat-option [value]="item.id" *ngFor="let item of (meetingSubTypes$ | async)">{{item.title}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+        <!-- <mat-form-field class="w-full">
+            <mat-label>Agenda Workflow</mat-label>
+            <mat-select formControlName="agendaApproverFlowId">
+                <mat-option [value]="null"></mat-option>
+                <mat-option Confirmationoption [value]="item.id" *ngFor="let item of (agendaApproveFlows$ | async)">{{item.title}}</mat-option>
+            </mat-select>
+        </mat-form-field> -->
+
+        <div class="flex flex-col  justify-center">
+            <mat-slide-toggle  [color]="'primary'" formControlName="isConfirmed" >Attendance Confirmation</mat-slide-toggle>
+            <mat-slide-toggle  [color]="'primary'" formControlName="isAutoEndDate" >Auto End Time</mat-slide-toggle>
+        </div>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-4 ">
+        <mat-form-field class="flex-1 ">
+            <mat-label>Meeting No.</mat-label>
+            <input matInput  formControlName="meetingNo" maxlength="90">
+        </mat-form-field>
+        <date-input [displayText]="'Meeting Date'" formControlName="meetingDate" [required]="true"  class="flex-1 "></date-input>
+        <div class="flex-1 flex flex-col">
+            <div class="flex flex-row w-full  gap-4">
+                <div class="flex flex-1">
+                    <mat-form-field
+                    [ngClass]="{'mat-form-field-invalid':dataForm?.hasError('invalidMaxTime')}"
+                    [appearance]="'fill'" floatLabel="always" class=" w-full">
+                        <mat-label>Time Start</mat-label>
+                        <input matInput placeholder="HH:mm" maxlength="5" mask="00:00" [leadZeroDateTime]="true" [clearIfNotMatch]="true" [hiddenInput]="true" [dropSpecialCharacters]="false" formControlName="timeStart">
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-1" *ngIf="dataForm && dataForm.get('isAutoEndDate').value === false">
+                    <mat-form-field
+                    [ngClass]="{'mat-form-field-invalid':dataForm?.hasError('invalidMaxTime')}"
+                    [appearance]="'fill'" floatLabel="always" class="w-full">
+                        <mat-label>Time End</mat-label>
+                        <input matInput placeholder="HH:mm" maxlength="5" mask="00:00" [leadZeroDateTime]="true" [clearIfNotMatch]="true" [hiddenInput]="true" [dropSpecialCharacters]="false" formControlName="timeEnd">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="dataForm?.hasError('invalidMaxTime')" class="text-sm text-red-600 -mt-3 ml-1">** Time Start must less than Time End</div>
+        </div>
+    </div>
+    <div class="flex flex-col md:flex-row gap-4 ">
+        <mat-form-field class="w-full">
+            <mat-label>Meeting Subject</mat-label>
+            <input matInput  formControlName="title" maxlength="900">
+        </mat-form-field>
+    </div>
+    <div class="flex flex-col md:flex-row gap-4 ">
+        <mat-form-field class="w-full">
+            <mat-label>Description</mat-label>
+            <textarea matInput  formControlName="detail"></textarea>
+        </mat-form-field>
+    </div>
+    <text-suggestion [title]="'Venue'" class="w-full"   [options]="venues"  displayText="Venue"  formControlName="venue"  ></text-suggestion>
+    <div class="flex flex-col md:flex-row gap-4 ">
+        <mat-form-field class="w-full">
+            <mat-label>Conference Link</mat-label>
+            <input matInput formControlName="conferenceUrl" maxlength="300">
+        </mat-form-field>
+    </div>
+    <div class="border-b mb-2"></div>
+        <div><mat-slide-toggle  [color]="'primary'" formControlName="isReserved" >Allow Reservation</mat-slide-toggle></div>
+        <ng-container *ngIf="dataForm && dataForm.get('isReserved').value === true">
+            <div class="flex flex-row gap-4 mt-2">
+                <div>
+                    <date-input
+                    [rangeDate]="dataForm.get('reserveEndDate').value" [rangeType]="'start'" [displayText]="'Reserve Start Date'" formControlName="reserveStartDate" class="flex-1"></date-input>
+                    <div *ngIf="dataForm?.hasError('invalidMinDate')" class="text-sm text-red-600  ml-1">** Reserve Start Date must less than Meeting Date</div>
+                </div>
+                <div>
+                    <date-input 
+                    [controlClass]="(dataForm?.hasError('invalidMaxDate') ? 'mat-form-field-invalid':null)"
+                    [rangeDate]="dataForm.get('reserveStartDate').value" [rangeType]="'end'" [displayText]="'Reserve End Date'" formControlName="reserveEndDate" class="flex-1"></date-input>
+                    <div *ngIf="dataForm?.hasError('invalidMaxDate')" class="text-sm text-red-600  ml-1">** Reserve End Date must less than Meeting Date</div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="border-b mb-2 mt-2"></div>
+    <div >
+        <mat-slide-toggle  [formControlName]="'active'"  [color]="'primary'">Publish on calendar</mat-slide-toggle>
+    </div>
+    <div class="border-b mb-2 my-6"></div>
+    <button mat-raised-button color="primary" class="save-button mat-accent" [disabled]="dataForm.invalid" >
+        <span *ngIf="!dataForm.disabled">
+            Save
+        </span>
+        <mat-progress-spinner
+            *ngIf="dataForm.disabled"
+            [diameter]="24"
+            [mode]="'indeterminate'"></mat-progress-spinner>
+    </button>
+</form>
+

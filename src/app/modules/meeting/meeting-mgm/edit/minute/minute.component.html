@@ -1,0 +1,82 @@
+<mat-drawer-container class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
+    <div class="relative flex flex-col gap-4 sm:flex-row flex-0 sm:items-center sm:justify-end pt-4 px-6 pb-4 border-b">
+        <div class="flex-1">
+            <file-input [displayText]="'Upload Minutes of Meeting  (.png, .jpg, .pdf, .docx, .xlsx, .pptx &lt;= 50Mb)'" [limitSize]="50" [acceptFile]="'.png,.jpg,.pdf,.docx,.xlsx,.pptx'" [(ngModel)]="minuteFile"></file-input>
+        </div>
+        <div class="mt-6"><button type="button" (click)="addMinute()" mat-raised-button class="bg-sky-700 w-20 text-white">Upload </button></div>
+        <div class="mt-6" *ngIf="(minuteHistories$ | async) as minuteHistories"><button  *ngIf="minuteHistories.length > 0" type="button" type="button" (click)="openConfirmForm()" mat-raised-button class="bg-sky-200"> Send Minutes Confirm </button></div>
+    </div>
+    <div class="flex-none mx-6 my-6">
+        <ng-container *ngIf="(minuteHistories$ | async) as minuteHistories">
+            <ng-container *ngIf="minuteHistories.length > 0">
+                <div class="mb-2 font-bold">Minutes Revision</div>
+                <div class="mb-6">
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th>
+                                    File Name
+                                </th>
+                                <th class="w-32">
+                                    Current Version
+                                </th>
+                                <th class="w-50">
+                                    Uploaded By
+                                </th>
+                                <th class="w-40">
+                                    Last Updated
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of minuteHistories">
+                                <td><a class="underline cursor-pointer" [openFile]="item">{{item.fileName}}</a></td>
+                                <td class="text-center">{{(item.realFileName === meeting.minuteRealFileName ? 'Yes': 'No')}}</td>
+                                <td>{{item.createdUser}}</td>
+                                <td>{{item.createdDate | date : 'dd/MM/yyyy HH:mm'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="(minuteConfirms$ | async) as minuteConfirms">
+            <ng-container *ngIf="minuteConfirms.length > 0">
+                <div class="mt-8 mb-2">
+                    <div class="font-bold ">Attendee Confirmations</div>
+                </div>
+                <div>
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th>Name</th>
+                                <th class="w-20">Confirm</th>
+                                <th class="w-40">Confirm Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of minuteConfirms">
+                                <td>{{item.name}}</td>
+                                <td class="text-center">
+                                    <ng-container *ngIf="item.isConfirm === true">
+                                        <mat-icon class="text-green-400 icon-size-5 material-symbols-outlined">check</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="item.isConfirm === false ">
+                                        <mat-icon class="text-gray-400 icon-size-5 material-symbols-outlined">block</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="item.isConfirm === null ">N/A </ng-container>
+                                </td>
+                                <td><span *ngIf="item.confirmDate">{{item.confirmDate | date : 'dd/MM/yyyy HH:mm'}}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+    <mat-drawer class="w-11/12" [autoFocus]="false" [mode]="'over'" [position]="'end'" [opened]="false" #matDrawer>
+
+    </mat-drawer>
+
+</mat-drawer-container>
