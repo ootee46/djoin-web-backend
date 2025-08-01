@@ -10,17 +10,17 @@ def globalVariable(envName){
     env.git_project_slug    = ""
 
     env.application_language    = [ "python": false, "nodejs": true, "golang": false, "dotnet_core": false, "java": false, "php": false, "dotnet_fw": false, "nodejs_with_yarn": false ]
-    env.deploy_type             = [ "oc": false, "aks": false, "aws": false, "azure_function": false, "appservice_srccode": false, "appservice_container": true ]
-    env.unit_test_base_image    = ""
+    env.deploy_type             = [ "oc": false, "aks": false, "aws": false, "azure_function": false, "appservice_srccode": true, "appservice_container": false ]
+    env.unit_test_base_image    = "node:23-alpine"
     env.automate_test           = [ "api_test" : false, "ui_test" : false ]
     env.allow_failure           = [ "trivy" : true, "sonarqube" : true, "blackduck" : true, "owasp" : true, "owasp_zap"  : true , "coverity" : true , "performance_test" : true, "api_test" : true, "ui_test" : true]
     env.build_cmd               = "npm run build"
     env.coverityID              = "cov-user1"
     env.blkduckID               = "blkduck-user1"
-    env.skip_stage              = [ "unit_test": true, "quality_analysis": true, "sca_black_duck": false, "sast_coverity": false, "image_scan_trivy": true, "dast_owasp_zap": true, "performance_test": true, "health_check_dev": true, "automate_test_dev": true, "health_check_sit": true, "automate_test_sit": true, "health_check_uat": true, "automate_test_uat": true, "health_check_prd": true]
-    env.image_regitry_server    = [ "acr": true, "nexus": false, "ecr": false, "gar": false, "gcr": false ]
-    env.container_os_platform   = [ "windows": false, "linux": false ]
-    env.is_scan_src_code_only   = true
+    env.skip_stage              = [ "unit_test": false, "quality_analysis": false, "sca_black_duck": false, "sast_coverity": false, "image_scan_trivy": true, "dast_owasp_zap": true, "performance_test": true, "health_check_dev": true, "automate_test_dev": true, "health_check_sit": true, "automate_test_sit": true, "health_check_uat": true, "automate_test_uat": true, "health_check_prd": true]
+    env.image_regitry_server    = [ "acr": false, "nexus": false, "ecr": false, "gar": false, "gcr": false ]
+    env.container_os_platform   = [ "windows": false, "linux": true ]
+    env.is_scan_src_code_only   = false
     env.is_build_with_internal_net = false
     env.time_sleep_before_health_check = 0
     env.coverity_exclude_path   = ""
