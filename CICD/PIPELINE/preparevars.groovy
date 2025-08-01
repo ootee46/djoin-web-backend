@@ -15,15 +15,16 @@ def globalVariable(envName){
     env.automate_test           = [ "api_test" : false, "ui_test" : false ]
     env.allow_failure           = [ "trivy" : true, "sonarqube" : true, "blackduck" : true, "owasp" : true, "owasp_zap"  : true , "coverity" : true , "performance_test" : true, "api_test" : true, "ui_test" : true]
     env.build_cmd               = "npm run build"
-    env.coverityID              = "cov-user1"
-    env.blkduckID               = "blkduck-user1"
+    env.coverityID              = "user1"
+    env.blkduckID               = "user1"
     env.skip_stage              = [ "unit_test": true, "quality_analysis": true, "sca_black_duck": false, "sast_coverity": false, "image_scan_trivy": true, "dast_owasp_zap": true, "performance_test": true, "health_check_dev": true, "automate_test_dev": true, "health_check_sit": true, "automate_test_sit": true, "health_check_uat": true, "automate_test_uat": true, "health_check_prd": true]
     env.image_regitry_server    = [ "acr": false, "nexus": false, "ecr": false, "gar": false, "gcr": false ]
     env.container_os_platform   = [ "windows": false, "linux": true ]
-    env.is_scan_src_code_only   = false
+    env.is_scan_src_code_only   = true
     env.is_build_with_internal_net = false
     env.time_sleep_before_health_check = 0
     env.coverity_exclude_path   = ""
+    env.is_multi_cluster_deployment = false
 
     // NPM Private Registry
     env.has_npm_private_reg     = false
