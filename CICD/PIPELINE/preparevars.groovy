@@ -99,6 +99,7 @@ def globalVariable(envName){
     switch (env.BRANCH_NAME) {
 
         case "develop":
+        case "origin/develop":
         case "hotfix":
             switch (envName) {
                 case cicd_env_1 :
