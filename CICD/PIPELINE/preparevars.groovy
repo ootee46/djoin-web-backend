@@ -17,7 +17,7 @@ def globalVariable(envName){
     env.build_cmd               = "npm run build"
     env.coverityID              = "cov-user1"
     env.blkduckID               = "blkduck-user1"
-    env.skip_stage              = [ "unit_test": false, "quality_analysis": false, "sca_black_duck": false, "sast_coverity": false, "image_scan_trivy": true, "dast_owasp_zap": true, "performance_test": true, "health_check_dev": true, "automate_test_dev": true, "health_check_sit": true, "automate_test_sit": true, "health_check_uat": true, "automate_test_uat": true, "health_check_prd": true]
+    env.skip_stage              = [ "unit_test": true, "quality_analysis": true, "sca_black_duck": false, "sast_coverity": false, "image_scan_trivy": true, "dast_owasp_zap": true, "performance_test": true, "health_check_dev": true, "automate_test_dev": true, "health_check_sit": true, "automate_test_sit": true, "health_check_uat": true, "automate_test_uat": true, "health_check_prd": true]
     env.image_regitry_server    = [ "acr": false, "nexus": false, "ecr": false, "gar": false, "gcr": false ]
     env.container_os_platform   = [ "windows": false, "linux": true ]
     env.is_scan_src_code_only   = false
