@@ -31,32 +31,32 @@ def globalVariable(envName){
     env.npm_private_reg_token   = "${project_group}-npm-registry"
 
     // DEV
-    url_env_1 = ""
-    url_root_path_env_1 = ""
-    url_health_check_path_env_1 = ""
+    url_env_1 = "https://join.pttdigital.com/"
+    url_root_path_env_1 = "/"
+    url_health_check_path_env_1 = "/"
     // SIT
-    url_env_2 = ""
-    url_root_path_env_2 = ""
-    url_health_check_path_env_2 = ""
+    url_env_2 = "https://join.pttdigital.com/"
+    url_root_path_env_2 = "/"
+    url_health_check_path_env_2 = "/"
     // UAT
-    url_env_3 = ""
-    url_root_path_env_3 = ""
-    url_health_check_path_env_3 = ""
+    url_env_3 = "https://join.pttdigital.com/"
+    url_root_path_env_3 = "/"
+    url_health_check_path_env_3 = "/"
     // PRD
-    url_env_4 = ""
-    url_root_path_env_4 = ""
-    url_health_check_path_env_4 = ""
+    url_env_4 = "https://join.pttdigital.com/"
+    url_root_path_env_4 = "/"
+    url_health_check_path_env_4 = "/"
 
      //! Azure Container Registry //
     acr_credentials_cicd      = "${project_group}-asp"
     // DEV
-    acr_server_env_1          = ""    // edit # name of 'Login server' in container registry
+    acr_server_env_1          = "djoin.azurecr.io"    // edit # name of 'Login server' in container registry
     // SIT
-    acr_server_env_2          = ""    // edit # name of 'Login server' in container registry
+    acr_server_env_2          = "djoin.azurecr.io"    // edit # name of 'Login server' in container registry
     // UAT
-    acr_server_env_3          = ""    // edit # name of 'Login server' in container registry
+    acr_server_env_3          = "djoin.azurecr.io"    // edit # name of 'Login server' in container registry
     // PRD
-    acr_server_env_4          = ""    // edit # name of 'Login server' in container registry
+    acr_server_env_4          = "djoin.azurecr.io"    // edit # name of 'Login server' in container registry
     //! End Azure Container Registry //
     
 
