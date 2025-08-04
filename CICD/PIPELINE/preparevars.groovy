@@ -15,8 +15,8 @@ def globalVariable(envName){
     env.automate_test           = [ "api_test" : false, "ui_test" : false ]
     env.allow_failure           = [ "trivy" : true, "sonarqube" : true, "blackduck" : true, "owasp" : true, "owasp_zap"  : true , "coverity" : true , "performance_test" : true, "api_test" : true, "ui_test" : true]
     env.build_cmd               = "npm run build"
-    env.coverityID              = "user5"
-    env.blkduckID               = "user5"
+    env.coverityID              = "cov-user5"
+    env.blkduckID               = "blkduck-user5"
     env.skip_stage              = [ "unit_test": true, "quality_analysis": true, "sca_black_duck": false, "sast_coverity": false, "image_scan_trivy": true, "dast_owasp_zap": true, "performance_test": true, "health_check_dev": true, "automate_test_dev": true, "health_check_sit": true, "automate_test_sit": true, "health_check_uat": true, "automate_test_uat": true, "health_check_prd": true]
     env.image_regitry_server    = [ "acr": false, "nexus": false, "ecr": false, "gar": false, "gcr": false ]
     env.container_os_platform   = [ "windows": false, "linux": true ]
