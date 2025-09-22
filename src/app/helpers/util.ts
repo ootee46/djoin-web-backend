@@ -44,7 +44,7 @@ export const isExistData = (data: any): boolean => {
 
 export const ShowApiErrorMessage = (error: any): string => {
   let errorMessage = 'Validation error';
-  if (error.error && error.error.messages) {
+  if (error?.error?.messages) {
     if (Array.isArray(error.error.messages)) {
       errorMessage = error.error.messages.join('<br>');
     }

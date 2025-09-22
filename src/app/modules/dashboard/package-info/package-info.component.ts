@@ -24,12 +24,12 @@ export class DashboardPackageInfoComponent implements OnInit, OnDestroy {
     user$: Observable<User>;
     user: User;
     lineApprove: LineApproveModel[];
-    private _unsubscribeAll: Subject<any> = new Subject();
+    private readonly _unsubscribeAll: Subject<any> = new Subject();
     private _formPopup: MatDialogRef<AgendaReserveFormComponent>;
     constructor(
-        private _service: DashboardService,
-        private _matDialog: MatDialog,
-        private _userService: UserService
+        private readonly _service: DashboardService,
+        private readonly _matDialog: MatDialog,
+        private readonly _userService: UserService
     ) {}
 
     ngOnInit(): void {

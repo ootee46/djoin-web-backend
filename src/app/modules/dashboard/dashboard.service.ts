@@ -1,49 +1,49 @@
-import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, switchMap, tap } from 'rxjs';
-import { DataListModel } from 'app/models/data-list.model';
+import { Injectable } from '@angular/core';
 import { ENDPOINT } from 'app/constants/endpoint';
-import { QueryListModel } from 'app/models/query-list.model';
 import {
     AgendaRequestItemListModel,
     AgendaRequestItemModel,
     AgendaRequestModel,
 } from 'app/models/agenda-request.model';
+import { DataListModel } from 'app/models/data-list.model';
+import { LineApproveModel } from 'app/models/line-approve.model';
+import { MeetingListModel } from 'app/models/meeting.model';
 import {
     MinuteRequestListModel,
     MinuteRequestModel,
 } from 'app/models/minute-request.model';
 import { PackageInfoModel } from 'app/models/package-info.model';
-import { MeetingListModel, MeetingModel } from 'app/models/meeting.model';
-import { LineApproveModel } from 'app/models/line-approve.model';
+import { QueryListModel } from 'app/models/query-list.model';
 import { GlobalService } from 'app/services/global.service';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
 export class DashboardService {
-    private _agendaApproverDetail: BehaviorSubject<AgendaRequestItemModel | null> =
+    private readonly _agendaApproverDetail: BehaviorSubject<AgendaRequestItemModel | null> =
         new BehaviorSubject(null);
-    private _agendaApproves: BehaviorSubject<DataListModel<AgendaRequestItemListModel> | null> =
+    private readonly _agendaApproves: BehaviorSubject<DataListModel<AgendaRequestItemListModel> | null> =
         new BehaviorSubject(null);
-    private _agendaApproveHistories: BehaviorSubject<DataListModel<AgendaRequestItemListModel> | null> =
+    private readonly _agendaApproveHistories: BehaviorSubject<DataListModel<AgendaRequestItemListModel> | null> =
         new BehaviorSubject(null);
-    private _agendaRequests: BehaviorSubject<DataListModel<AgendaRequestModel> | null> =
+    private readonly _agendaRequests: BehaviorSubject<DataListModel<AgendaRequestModel> | null> =
         new BehaviorSubject(null);
-    private _minuteApproves: BehaviorSubject<DataListModel<MinuteRequestListModel> | null> =
+    private readonly _minuteApproves: BehaviorSubject<DataListModel<MinuteRequestListModel> | null> =
         new BehaviorSubject(null);
-    private _minuteApproveHistories: BehaviorSubject<DataListModel<MinuteRequestListModel> | null> =
+    private readonly _minuteApproveHistories: BehaviorSubject<DataListModel<MinuteRequestListModel> | null> =
         new BehaviorSubject(null);
-    private _minuteApproverDetail: BehaviorSubject<MinuteRequestModel | null> =
+    private readonly _minuteApproverDetail: BehaviorSubject<MinuteRequestModel | null> =
         new BehaviorSubject(null);
-    private _packageInfo: BehaviorSubject<PackageInfoModel | null> =
+    private readonly _packageInfo: BehaviorSubject<PackageInfoModel | null> =
         new BehaviorSubject(null);
-    private _lineApprove: BehaviorSubject<LineApproveModel[]> =
+    private readonly _lineApprove: BehaviorSubject<LineApproveModel[]> =
         new BehaviorSubject(null);
-    private _upcomingMeetings: BehaviorSubject<DataListModel<MeetingListModel> | null> =
+    private readonly _upcomingMeetings: BehaviorSubject<DataListModel<MeetingListModel> | null> =
         new BehaviorSubject(null);
-    private _historyMeetings: BehaviorSubject<DataListModel<MeetingListModel> | null> =
+    private readonly _historyMeetings: BehaviorSubject<DataListModel<MeetingListModel> | null> =
         new BehaviorSubject(null);
-    constructor(private _httpClient: HttpClient, private _globalService: GlobalService) {}
+    constructor(private readonly _httpClient: HttpClient, private readonly _globalService: GlobalService) {}
 
     get agendaApproverDetail$(): Observable<AgendaRequestItemModel> {
         return this._agendaApproverDetail.asObservable();

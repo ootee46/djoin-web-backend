@@ -1,39 +1,9 @@
 <form #myForm="ngForm"  (submit)="doSave()"  [formGroup]="dataForm" >
     <div class="flex flex-col md:flex-row gap-4">
-        <!-- <mat-form-field class="w-full">
-            <mat-label>Meeting Room</mat-label>
-            <mat-select  formControlName="meetingRoomId">
-                <mat-option [value]="item.id" *ngFor="let item of (meetingGroups$ | async)">{{item.name}}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-
         <search-option formControlName="meetingRoomId" [placeholder]="null" [displayText]="'Meeting Room'" [options$]="meetingGroups$"  [value]="'id'" [text]="'name'" class="w-full"></search-option>
         <search-option formControlName="meetingTypeId"  [placeholder]="null" [displayText]="'Meeting Type'" (selectionChange)="getMeetingSubType()" [options$]="meetingTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
         <search-option formControlName="meetingSubTypeId"  [placeholder]="null"  [displayText]="'Sub Meeting Type'" [options$]="meetingSubTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
-        <search-option formControlName="agendaApproverFlowId"  [placeholder]="null" [displayText]="'Agenda Workflow'" [options$]="agendaApproveFlows$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
-
-        <!-- <mat-form-field class="w-full">
-            <mat-label>Meeting Type</mat-label>
-            <mat-select formControlName="meetingTypeId" (selectionChange)="getMeetingSubType()">
-                <mat-option [value]="null"></mat-option>
-                <mat-option [value]="item.id" *ngFor="let item of (meetingTypes$ | async)">{{item.title}}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-        <!-- <mat-form-field class="w-full">
-            <mat-label>Sub Meeting Type</mat-label>
-            <mat-select formControlName="meetingSubTypeId">
-                <mat-option [value]="null"></mat-option>
-                <mat-option [value]="item.id" *ngFor="let item of (meetingSubTypes$ | async)">{{item.title}}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-        <!-- <mat-form-field class="w-full">
-            <mat-label>Agenda Workflow</mat-label>
-            <mat-select formControlName="agendaApproverFlowId">
-                <mat-option [value]="null"></mat-option>
-                <mat-option Confirmationoption [value]="item.id" *ngFor="let item of (agendaApproveFlows$ | async)">{{item.title}}</mat-option>
-            </mat-select>
-        </mat-form-field> -->
-
+        <search-option *ngIf="isPrePost" formControlName="agendaApproverFlowId"  [placeholder]="null" [displayText]="'Agenda Workflow'" [options$]="agendaApproveFlows$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
         <div class="flex flex-col  justify-center">
             <mat-slide-toggle  [color]="'primary'" formControlName="isConfirmed" >Attendance Confirmation</mat-slide-toggle>
             <mat-slide-toggle  [color]="'primary'" formControlName="isAutoEndDate" >Auto End Time</mat-slide-toggle>
@@ -87,8 +57,8 @@
         </mat-form-field>
     </div>
     <div class="border-b mb-2"></div>
-        <div><mat-slide-toggle  [color]="'primary'" formControlName="isReserved" >Allow Reservation</mat-slide-toggle></div>
-        <ng-container *ngIf="dataForm && dataForm.get('isReserved').value === true">
+        <div><mat-slide-toggle  [color]="'primary'" formControlName="isReserved" *ngIf="isPrePost">Allow Reservation</mat-slide-toggle></div>
+        <ng-container *ngIf="dataForm && dataForm.get('isReserved').value === true && isPrePost">
             <div class="flex flex-row gap-4 mt-2">
                 <div>
                     <date-input

@@ -44,24 +44,20 @@ export class MeetingMgmEditComponent implements OnInit, OnDestroy {
     requestId: string;
     meetingId: number;
     isPrePost: boolean = false;
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
+    private readonly _unsubscribeAll: Subject<any> = new Subject<any>();
     constructor(
-        private _service: MeetingMgmService,
-        private _route: ActivatedRoute,
-        private _router: Router,
-        private _globalService: GlobalService,
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseMediaWatcherService: FuseMediaWatcherService
+        private readonly _service: MeetingMgmService,
+        private readonly _route: ActivatedRoute,
+        private readonly _router: Router,
+        private readonly _globalService: GlobalService,
+        private readonly _changeDetectorRef: ChangeDetectorRef,
+        private readonly _fuseMediaWatcherService: FuseMediaWatcherService
     ) {}
 
     ngOnInit(): void {
         this.isPrePost =
             this._globalService.packageInfo.featureList?.includes('f7');
-        if (
-            this._route.snapshot &&
-            this._route.snapshot.url &&
-            this._route.snapshot.url.length > 0
-        ) {
+        if (this._route.snapshot?.url?.length > 0) {
             const urlPath = this._route.snapshot.url[0].path.toLowerCase();
             if (this.validPaths.includes(urlPath)) {
                 this.selectedPanel = urlPath;

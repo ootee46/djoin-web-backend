@@ -12,7 +12,7 @@
             <search-option formControlName="meetingRoomId" [placeholder]="null" [displayText]="'Meeting Room'" [options$]="meetingGroups$"  [value]="'id'" [text]="'name'" class="w-full"></search-option>
             <search-option formControlName="meetingTypeId"  [placeholder]="null" [displayText]="'Meeting Type'" (selectionChange)="getMeetingSubType()" [options$]="meetingTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
             <search-option formControlName="meetingSubTypeId"  [placeholder]="null"  [displayText]="'Sub Meeting Type'" [options$]="meetingSubTypes$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
-            <search-option formControlName="agendaApproverFlowId"  [placeholder]="null" [displayText]="'Agenda Workflow'" [options$]="agendaApproveFlows$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
+            <search-option *ngIf="isPrePost" formControlName="agendaApproverFlowId"  [placeholder]="null" [displayText]="'Agenda Workflow'" [options$]="agendaApproveFlows$"  [value]="'id'" [text]="'title'" class="w-full"></search-option>
     
             <div class="flex flex-col  justify-center mb-2">
                 <mat-slide-toggle [color]="'primary'" formControlName="isConfirmed">Attendance Confirmation</mat-slide-toggle>
@@ -69,8 +69,8 @@
             </mat-form-field>
         </div>
         <div class="border-b mb-2"></div>
-        <div><mat-slide-toggle [color]="'primary'" formControlName="isReserved">Allow Reservation</mat-slide-toggle></div>
-        <ng-container *ngIf="dataForm && dataForm.get('isReserved').value === true">
+        <div *ngIf="isPrePost"><mat-slide-toggle [color]="'primary'" formControlName="isReserved">Allow Reservation</mat-slide-toggle></div>
+        <ng-container *ngIf="dataForm && dataForm.get('isReserved').value === true && isPrePost">
             <div class="flex flex-row gap-4 mt-2">
                 <div>
                     <date-input
