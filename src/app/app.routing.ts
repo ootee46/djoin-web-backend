@@ -4,7 +4,6 @@ import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { InitialDataResolver } from 'app/app.resolvers';
 import { SigninResolver } from './modules/auth/sign-in/sign-in.resolvers';
-import { AntiforgerResolver } from './antiforgery.resolvers';
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -19,7 +18,6 @@ export const appRoutes: Route[] = [
         path: '',
         canActivate: [NoAuthGuard],
         canActivateChild: [NoAuthGuard],
-        resolve:[ AntiforgerResolver],
         component: LayoutComponent,
         data: {
             layout: 'empty'
@@ -34,7 +32,6 @@ export const appRoutes: Route[] = [
         path: '',
         canActivate: [AuthGuard],
         canActivateChild: [AuthGuard],
-        resolve:[ AntiforgerResolver],
         component: LayoutComponent,
         data: {
             layout: 'empty'
