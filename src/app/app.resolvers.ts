@@ -15,10 +15,9 @@ export class InitialDataResolver implements Resolve<any>
      * Constructor
      */
     constructor(
-        private _navigationService: NavigationService,
-        private _authService: AuthService,
-        private _userService: UserService,
-        private _dashboardService: DashboardService,
+        private  readonly _navigationService: NavigationService,
+        private  readonly _userService: UserService,
+        private  readonly _dashboardService: DashboardService,
     )
     {
     }
@@ -38,7 +37,6 @@ export class InitialDataResolver implements Resolve<any>
         // Fork join multiple API endpoint calls to wait all of them to finish
         return forkJoin([
             this._navigationService.get(),
-            this._authService.getAntiforgery(),
             this._dashboardService.getPackageInfo(),
             this._userService.get()
         ]);
