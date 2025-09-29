@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { PackageInfoModel } from 'app/models/package-info.model';
+import { GlobalService } from 'app/services/global.service';
 import { Observable } from 'rxjs';
 import { DashboardService } from './dashboard.service';
-import { GlobalService } from 'app/services/global.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,10 +20,10 @@ export class DashboardComponent implements OnInit {
   package$: Observable<PackageInfoModel>;
   isPrePost: boolean = false;
   constructor(
-    private _route: ActivatedRoute,
-    private _userService: UserService,
-    private _globalService: GlobalService,
-    private _service: DashboardService,
+    private readonly _route: ActivatedRoute,
+    private readonly _userService: UserService,
+    private readonly _globalService: GlobalService,
+    private readonly _service: DashboardService,
   ) { }
 
   ngOnInit(): void {

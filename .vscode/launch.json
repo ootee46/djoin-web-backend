@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome", // ✅ เปลี่ยนตรงนี้
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:5555",
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "npm: start",
+            "runtimeArgs": [
+                "--remote-debugging-port=9222",
+                "--auto-open-devtools-for-tabs",
+                "--detach" // 👈 เปิด DevTools เป็นหน้าต่างแยก
+            ]
+        }
+    ]
+}

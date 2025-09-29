@@ -66,11 +66,13 @@ export const ENDPOINT = {
         attachmentDelete:
             environment.apiUrl + '/meeting-agenda/attachment-delete',
         attachmentPos: environment.apiUrl + '/meeting-agenda/attachment-pos',
-        attachmentPosBatch: environment.apiUrl + '/meeting-agenda/attachment-pos-batch',
+        attachmentPosBatch:
+            environment.apiUrl + '/meeting-agenda/attachment-pos-batch',
         attachmentPermission:
             environment.apiUrl + '/meeting-agenda/attachment-permission',
         attachmentPermissionForList:
-            environment.apiUrl + '/meeting-agenda/attachment-permission-for-list',
+            environment.apiUrl +
+            '/meeting-agenda/attachment-permission-for-list',
         presenterAttachmentAdd:
             environment.apiUrl + '/meeting-agenda/presenter-attachment-add',
         presenterAttachmentDelete:
@@ -180,14 +182,17 @@ export const ENDPOINT = {
         removeAttachment:
             environment.apiUrl + '/AgendaRequest/remove-attachment',
         posAttachment: environment.apiUrl + '/AgendaRequest/pos-attachment',
-        posAttachmentBatch: environment.apiUrl + '/AgendaRequest/pos-attachment-batch',
+        posAttachmentBatch:
+            environment.apiUrl + '/AgendaRequest/pos-attachment-batch',
         getByMeeting: environment.apiUrl + '/AgendaRequest/get-by-meeting',
         export: environment.apiUrl + '/AgendaRequest/export',
         updateAttachmentPermission:
             environment.apiUrl + '/AgendaRequest/update-attachment-permission',
         updateAttachmentPermissionForList:
-            environment.apiUrl + '/AgendaRequest/update-attachment-permission-for-list',
-        getMeetingRelation: environment.apiUrl + '/AgendaRequest/get-meeting-relation',
+            environment.apiUrl +
+            '/AgendaRequest/update-attachment-permission-for-list',
+        getMeetingRelation:
+            environment.apiUrl + '/AgendaRequest/get-meeting-relation',
     },
 
     agendaReview: {
