@@ -1,0 +1,2 @@
+@Library('jenkins_shared_libs_declarative@main') _
+loadJenkinsfile(env.BRANCH_NAME)
