@@ -23,6 +23,7 @@ import { MeetingMgmService } from '../../meeting-mgm.service';
 import { AgendaService } from './agenda.service';
 import { MeetingAgendaFormComponent } from './form/form.component';
 import { MeetingAgendaForm2Component } from './form2/form2.component';
+import { GlobalService } from 'app/services/global.service';
 
 @Component({
     selector: 'meeting-agenda',
@@ -37,6 +38,7 @@ export class AgendaComponent implements OnInit, OnDestroy {
     meeting: MeetingModel = null;
     id: number;
     bgSteps = ['bg-sky-200', 'bg-sky-100', 'bg-gray-50', 'bg-white', 'bg-white', 'bg-white', 'bg-white', 'bg-white', 'bg-white', 'bg-gray-100'];
+    isPrePost: boolean = false;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     private _query = new QueryListModel({});
     private meetingId: number;
@@ -49,12 +51,15 @@ export class AgendaComponent implements OnInit, OnDestroy {
         private _route: ActivatedRoute,
         private _splash: FuseSplashScreenService,
         private _router: Router,
+        private _globalService: GlobalService,
         private _meetingService: MeetingMgmService,
         private _platformLocation: PlatformLocation,
         private _http: HttpClient,
     ) { }
 
     ngOnInit(): void {
+          this.isPrePost =
+            this._globalService.packageInfo.featureList?.includes('f7');
         this._baseHref = this._platformLocation.getBaseHrefFromDOM();
         this.meetingId = parseInt(this._route.snapshot.paramMap.get('id'), 10);
         if (this.meetingId) {

@@ -1,7 +1,7 @@
 <div class="sm:absolute sm:inset-0 flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card">
     <div class="relative flex flex-col gap-4 sm:flex-row flex-0 sm:items-center sm:justify-end pt-4 px-6 border-b">
         <div><button type="button" (click)="create()" mat-raised-button color="primary" class="mb-4"> New Agenda </button></div>
-        <div><button type="button" (click)="create2()" mat-raised-button class="mb-4 bg-sky-100"> List of Agenda </button></div>
+        <div *ngIf="isPrePost"><button type="button" (click)="create2()" mat-raised-button class="mb-4 bg-sky-100"> List of Agenda </button></div>
         <div><button type="button" (click)="export()" mat-raised-button class="mb-4 bg-gray-200"> Export Agendum </button></div>
     </div>
     <div class="flex flex-auto overflow-hidden">
@@ -40,8 +40,8 @@
                                             <button type="button" mat-menu-item (click)="subCreate(data)">
                                                 <mat-icon class="material-symbols-outlined">add_circle</mat-icon> Add Agenda
                                             </button>
-                                            <mat-divider></mat-divider>
-                                            <button type="button" mat-menu-item (click)="createReserveChild(data)">
+                                            <mat-divider *ngIf="isPrePost"></mat-divider>
+                                            <button *ngIf="isPrePost" type="button" mat-menu-item (click)="createReserveChild(data)">
                                                 <mat-icon class="material-symbols-outlined">add_task</mat-icon> Add Reserve Agenda
                                             </button>
                                             <mat-divider></mat-divider>
@@ -110,8 +110,8 @@
                                         <button type="button" mat-menu-item (click)="subCreate(data)">
                                             <mat-icon class="material-symbols-outlined">add_circle</mat-icon> Add Agenda
                                         </button>
-                                        <mat-divider></mat-divider>
-                                        <button type="button" mat-menu-item (click)="createReserveChild(data)">
+                                        <mat-divider *ngIf="isPrePost"></mat-divider>
+                                        <button *ngIf="isPrePost" type="button" mat-menu-item (click)="createReserveChild(data)">
                                             <mat-icon class="material-symbols-outlined">add_task</mat-icon> Add Reserve Agenda
                                         </button>
                                         <mat-divider></mat-divider>
