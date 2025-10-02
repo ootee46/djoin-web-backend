@@ -16,6 +16,7 @@ import { User } from 'app/core/user/user.types';
 import { UserService } from 'app/core/user/user.service';
 import { CustomValidator } from 'app/validators/custom.validate';
 import { UserGroupModel } from 'app/models/user-group.model';
+import { GlobalService } from 'app/services/global.service';
 @Component({
     selector: 'user-form',
     templateUrl: './form.component.html',
@@ -35,6 +36,7 @@ export class UserFormComponent implements OnInit, OnDestroy, AfterViewInit {
     allUsers: UserModel[] = [];
     userInfo: User;
     minDate: Date = moment().add(1,'day').toDate();
+    isPrePost: boolean = false;
     private _unsubscribeAll: Subject<any> = new Subject();
     private _popupEmployee: MatDialogRef<ActiveDirectorySearchComponent>;
     constructor(
@@ -43,6 +45,7 @@ export class UserFormComponent implements OnInit, OnDestroy, AfterViewInit {
         @Inject(MAT_DIALOG_DATA) private input: InputFormData<UserModel>,
         private _formBuilder: UntypedFormBuilder,
         private _service: UserDataService,
+        private _globalService: GlobalService,
         private _userService: UserService,
     ) {
 
@@ -58,6 +61,7 @@ export class UserFormComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
     ngOnInit(): void {
+        this.isPrePost = this._globalService.packageInfo.featureList?.includes('f7');
         this.action = this.input.action;
         this.dialogTitle = (this.action === 'add' ? 'New' : 'Update');
         this.data = this.input.data;

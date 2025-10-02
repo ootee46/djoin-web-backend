@@ -132,11 +132,11 @@
                     </mat-form-field>
                 </div>
             </div>
-            <ng-container *ngIf="dataForm.get('userLevel') && dataForm.get('userLevel').value !== 3">
+            <ng-container *ngIf="dataForm.get('userLevel') && dataForm.get('userLevel').value !== 3 && isPrePost">
                 <div class="mb-2 border-b text-2xl font-bold">Approvers</div>
                 <div *ngFor="let item of approverForms">
                     <div class="w-full flex flex-row gap-4 items-center">
-                        <div class="w-20">{{item.positionTitle}}</div>
+                        <div class="w-40 mt-4">{{item.positionTitle}}</div>
                         <div class="flex-1">
                             <select-search class="w-full" [options]="allUsers" [value]="'id'" [text]="'name'" [(ngModel)]="item.approverId" [ngModelOptions]="{standalone: true}"></select-search>
                         </div>
